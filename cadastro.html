@@ -26,10 +26,18 @@
                             <i class="fas fa-home me-1"></i>Dashboard
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="cadastro.html">
-                            <i class="fas fa-plus-circle me-1"></i>Cadastrar Devolução
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" id="cadastroDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-plus-circle me-1"></i>Cadastrar
                         </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item active" href="cadastro.html">
+                                <i class="fas fa-undo me-2"></i>Devolução
+                            </a></li>
+                            <li><a class="dropdown-item" href="cadastro-pessoas.html">
+                                <i class="fas fa-user me-2"></i>Cliente/Mecânico
+                            </a></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="consulta.html">
@@ -39,6 +47,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="relatorio.html">
                             <i class="fas fa-chart-bar me-1"></i>Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="backup.html">
+                            <i class="fas fa-download me-1"></i>Backup
                         </a>
                     </li>
                 </ul>
@@ -116,11 +129,11 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label for="mecanico" class="form-label">
-                                        Mecânico <span class="text-danger">*</span>
+                                        Mecânico <small class="text-muted">(opcional)</small>
                                     </label>
-                                    <input type="text" class="form-control" id="mecanico" name="mecanico" required>
+                                    <input type="text" class="form-control" id="mecanico" name="mecanico" placeholder="Deixe em branco se for o mesmo que o cliente">
                                     <div class="invalid-feedback">
-                                        Por favor, informe o nome do mecânico.
+                                        Nome do mecânico inválido.
                                     </div>
                                 </div>
 

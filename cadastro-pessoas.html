@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Pessoa - Sistema de Controle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-tools me-2"></i>
+                Sistema de Controle de Retorno de Peças
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="cadastroDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-plus-circle me-1"></i>Cadastrar
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="cadastro.html">
+                                <i class="fas fa-undo me-2"></i>Devolução
+                            </a></li>
+                            <li><a class="dropdown-item active" href="cadastro-pessoas.html">
+                                <i class="fas fa-user me-2"></i>Cliente/Mecânico
+                            </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="consulta.html">
+                            <i class="fas fa-search me-1"></i>Consultar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="relatorio.html">
+                            <i class="fas fa-chart-bar me-1"></i>Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="backup.html">
+                            <i class="fas fa-download me-1"></i>Backup
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-header mb-4">
+                    <h1 class="display-5">Cadastrar Cliente/Mecânico</h1>
+                    <p class="text-muted">Registre uma nova pessoa que pode atuar como cliente ou mecânico</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Form Column -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user-plus me-2"></i>
+                            Formulário de Cadastro
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Alert container -->
+                        <div id="alertContainer"></div>
+
+                        <form id="personForm" novalidate>
+                            <div class="row">
+                                <!-- Basic Information -->
+                                <div class="col-md-8 mb-3">
+                                    <label for="nome" class="form-label">
+                                        Nome Completo <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="nome" name="nome" required>
+                                    <div class="invalid-feedback">
+                                        Por favor, informe o nome completo.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="tipo" class="form-label">
+                                        Tipo <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select" id="tipo" name="tipo" required>
+                                        <option value="">Selecione o tipo</option>
+                                        <option value="Cliente">Apenas Cliente</option>
+                                        <option value="Mecânico">Apenas Mecânico</option>
+                                        <option value="Ambos">Cliente e Mecânico</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Por favor, selecione o tipo da pessoa.
+                                    </div>
+                                </div>
+
+                                <!-- Contact Information -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefone" class="form-label">Telefone</label>
+                                    <input type="tel" class="form-control" id="telefone" name="telefone" placeholder="(11) 99999-9999">
+                                    <div class="invalid-feedback">
+                                        Formato inválido de telefone.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">E-mail</label>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="exemplo@email.com">
+                                    <div class="invalid-feedback">
+                                        Formato inválido de e-mail.
+                                    </div>
+                                </div>
+
+                                <!-- Document -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="documento" class="form-label">CPF/CNPJ</label>
+                                    <input type="text" class="form-control" id="documento" name="documento" placeholder="000.000.000-00">
+                                    <div class="invalid-feedback">
+                                        Documento inválido.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="status" class="form-label">Status</label>
+                                    <select class="form-select" id="status" name="status">
+                                        <option value="Ativo">Ativo</option>
+                                        <option value="Inativo">Inativo</option>
+                                    </select>
+                                </div>
+
+                                <!-- Address -->
+                                <div class="col-12 mb-3">
+                                    <label for="endereco" class="form-label">Endereço</label>
+                                    <textarea class="form-control" id="endereco" name="endereco" rows="2" placeholder="Rua, número, bairro, cidade, CEP..."></textarea>
+                                </div>
+
+                                <!-- Notes -->
+                                <div class="col-12 mb-3">
+                                    <label for="observacoes" class="form-label">Observações</label>
+                                    <textarea class="form-control" id="observacoes" name="observacoes" rows="3" placeholder="Informações adicionais..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-2 justify-content-end">
+                                <button type="button" class="btn btn-secondary" onclick="resetPersonForm()">
+                                    <i class="fas fa-times me-1"></i>Limpar
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i>Salvar Pessoa
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Column -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Informações
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <h6 class="alert-heading">Sobre os Tipos:</h6>
+                            <ul class="mb-0 small">
+                                <li><strong>Apenas Cliente:</strong> Pessoa aparecerá apenas na lista de clientes</li>
+                                <li><strong>Apenas Mecânico:</strong> Pessoa aparecerá apenas na lista de mecânicos</li>
+                                <li><strong>Cliente e Mecânico:</strong> Pessoa pode atuar nas duas funções</li>
+                            </ul>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <h6 class="alert-heading">Dica:</h6>
+                            <p class="mb-0 small">Na maioria dos casos, a mesma pessoa atua como cliente e mecânico. Selecione "Cliente e Mecânico" para facilitar o cadastro de devoluções.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Additions -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-users me-2"></i>
+                            Cadastros Recentes
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="recentPeople">
+                            <p class="text-muted small">Nenhuma pessoa cadastrada ainda.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light mt-5 py-4">
+        <div class="container">
+            <div class="text-center text-muted">
+                <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/pessoas.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Initialize database
+                await initDatabase();
+                
+                // Initialize people database
+                await initPeopleDatabase();
+                
+                // Initialize form validation
+                initPersonFormValidation();
+                
+                // Load recent people
+                await loadRecentPeople();
+            } catch (error) {
+                console.error('Error initializing form:', error);
+                showAlert('Erro ao inicializar formulário: ' + error.message, 'danger');
+            }
+        });
+
+        function resetPersonForm() {
+            const form = document.getElementById('personForm');
+            form.reset();
+            form.classList.remove('was-validated');
+            
+            // Set default status
+            document.getElementById('status').value = 'Ativo';
+            
+            // Clear any alerts
+            document.getElementById('alertContainer').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
