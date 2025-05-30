@@ -282,7 +282,11 @@ async function submitPersonForm() {
             // Update existing person
             await updatePerson(window.editingPersonId, formData);
             personId = window.editingPersonId;
-            showAlert('Pessoa atualizada com sucesso!', 'success');
+            if (typeof showAlert === 'function') {
+                showAlert('Pessoa atualizada com sucesso!', 'success');
+            } else {
+                alert('Pessoa atualizada com sucesso!');
+            }
             console.log('Person updated successfully with ID:', personId);
             
             // Reset editing mode
@@ -290,7 +294,11 @@ async function submitPersonForm() {
         } else {
             // Create new person
             personId = await addPerson(formData);
-            showAlert('Pessoa cadastrada com sucesso!', 'success');
+            if (typeof showAlert === 'function') {
+                showAlert('Pessoa cadastrada com sucesso!', 'success');
+            } else {
+                alert('Pessoa cadastrada com sucesso!');
+            }
             console.log('Person added successfully with ID:', personId);
         }
 
@@ -306,7 +314,11 @@ async function submitPersonForm() {
 
     } catch (error) {
         console.error('Error saving person:', error);
-        showAlert('Erro ao salvar pessoa: ' + error.message, 'danger');
+        if (typeof showAlert === 'function') {
+            showAlert('Erro ao salvar pessoa: ' + error.message, 'danger');
+        } else {
+            alert('Erro ao salvar pessoa: ' + error.message);
+        }
     } finally {
         // Restore button state
         submitButton.disabled = false;
