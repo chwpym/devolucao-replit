@@ -1,0 +1,163 @@
+📄 PRD - Sistema de Controle de Retorno de Peças (MVP)
+🏷️ Projeto
+Nome: Sistema de Controle de Retorno de Peças
+Versão: MVP
+Plataforma: Web App (Replit)
+Banco: IndexedDB (no navegador)
+
+🎯 Objetivo
+Desenvolver um Web App que rode inteiramente no navegador, utilizando IndexedDB para armazenamento local dos dados. O sistema permitirá o registro, busca e geração de relatórios de peças devolvidas, vinculado a vendas, clientes e mecânicos.
+
+🧠 Escopo Funcional (MVP)
+🔸 Módulos Funcionais
+Cadastro de Devoluções
+
+Consulta e Filtros de Devoluções
+
+Geração de Relatórios
+
+Dashboard Inicial (opcional)
+
+🔸 Campos do Registro de Devolução
+Campo	Tipo	Obrigatório	Descrição
+Código da Peça	Texto/Numérico	✅	Código interno da peça
+Descrição da Peça	Texto	✅	Nome/descrição da peça
+Quantidade Devolvida	Numérico (int)	✅	Quantidade de itens devolvidos
+Cliente	Texto	✅	Nome do cliente
+Mecânico	Texto	✅	Nome do mecânico associado
+Requisição de Venda	Texto/Numérico	✅	Código da venda vinculada
+Ação na Requisição	Dropdown	✅	[Alterada, Excluída]
+Data da Venda	Data	✅	Data da venda original
+Data da Devolução	Data	✅	Data em que a devolução foi realizada
+Observação	Texto (long)	❌	Campo livre para comentários
+
+🔍 Funcionalidades de Busca e Filtros
+🔎 Filtros:
+
+Código da Peça
+
+Cliente
+
+Mecânico
+
+Período (Data da Venda e/ou Data da Devolução)
+
+Requisição de Venda
+
+Ação na Requisição (Alterada/Excluída)
+
+📊 Relatórios
+Relatórios gerados diretamente na interface:
+
+Tabela agrupada por:
+
+Peça
+
+Cliente
+
+Mecânico
+
+Quantitativos por período
+
+Exportação para CSV (opcional no MVP)
+
+🔐 Usuários e Acesso
+Sem controle de usuários (rodando no navegador local)
+
+🎨 UI/UX Simples
+Frontend leve e responsivo
+
+Interface limpa com:
+
+Tela de Cadastro de Devolução
+
+Tela de Busca/Listagem
+
+Tela de Relatórios
+
+Dashboard inicial (opcional)
+
+🏗️ Arquitetura e Stack Tecnológica
+Item	Tecnologia
+Plataforma	Replit (Static Web)
+Backend	Nenhum (100% Frontend)
+Banco de Dados	IndexedDB (Local no navegador)
+Frontend	HTML, CSS, JavaScript
+Framework CSS	Bootstrap ou Tailwind
+Biblioteca IndexedDB (opcional)	idb (facilita operações)
+
+🗂️ Estrutura de Diretórios (Sugerida)
+bash
+Copiar
+Editar
+/
+ ┣ /css            → Estilos (Bootstrap/Tailwind ou customizado)
+ ┣ /js             → Scripts JavaScript (IndexedDB, lógica do app)
+ ┣ /img            → Imagens e ícones
+ ┣ index.html      → Tela principal
+ ┣ cadastro.html   → Tela de cadastro de devoluções
+ ┣ consulta.html   → Tela de busca e relatórios
+ ┣ relatorio.html  → Tela de relatório detalhado
+ ┣ README.md       → Documentação
+🏛️ Modelo de Banco de Dados IndexedDB
+Banco: dbRetornos
+Store (tabela)	Nome: devolucoes
+Chave primária	id (autoIncrement)
+Índices	
+- codigo_peca	Para buscas rápidas
+- cliente	
+- mecanico	
+- requisicao_venda	
+- acao_requisicao	
+- data_venda	
+- data_devolucao	
+
+Exemplo de Objeto
+json
+Copiar
+Editar
+{
+  "id": 1,
+  "codigo_peca": "ABC123",
+  "descricao_peca": "Pastilha de Freio",
+  "quantidade_devolvida": 2,
+  "cliente": "José da Silva",
+  "mecanico": "Carlos Mecânico",
+  "requisicao_venda": "RV001",
+  "acao_requisicao": "Alterada",
+  "data_venda": "2024-05-10",
+  "data_devolucao": "2024-05-15",
+  "observacao": "Cliente trouxe a peça com defeito"
+}
+⏳ Roadmap do MVP
+Etapa	Status	Descrição
+✅ Modelagem IndexedDB	Planejado	Criar store devolucoes com índices
+✅ Tela de Cadastro	Planejado	Formulário que grava no IndexedDB
+✅ Tela de Consulta/Busca	Planejado	Filtros por peça, cliente, mecânico, etc.
+✅ Tela de Relatórios	Planejado	Exibir dados agregados
+✅ Exportação CSV (Opcional)	Planejado	Gerar CSV com base nos dados do IndexedDB
+✅ Deploy no Replit	Planejado	Rodando como página estática
+
+⚠️ Fora de Escopo no MVP
+Sincronização entre dispositivos
+
+Controle de usuários
+
+Backup automático (pode ser adicionado exportação/importação manual)
+
+Integração com sistemas externos (ERP, NF-e)
+
+💡 Considerações Importantes
+IndexedDB funciona apenas no navegador do usuário. Se o usuário limpar o cache ou usar outro dispositivo, os dados não estarão disponíveis.
+
+Podemos adicionar uma função de exportação e importação JSON ou CSV para backup manual.
+
+Se desejar, posso gerar para você o código completo inicial desse projeto, incluindo:
+
+📂 Estrutura de arquivos pronta
+
+🗂️ Configuração do IndexedDB com a biblioteca idb (opcional, mas recomendada)
+
+🖥️ Telas HTML prontas com Bootstrap ou Tailwind
+
+🧠 Funções JS para gravar, consultar e listar dados no IndexedDB
