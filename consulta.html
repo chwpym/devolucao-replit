@@ -516,6 +516,11 @@
             showAlert('Arquivo CSV exportado com sucesso!', 'success');
         }
 
+        function editDevolution(id) {
+            // Redirect to cadastro page with edit parameter
+            window.location.href = `cadastro.html?edit=${id}`;
+        }
+
         function showAlert(message, type) {
             const alertHtml = `
                 <div class="alert alert-${type} alert-dismissible fade show" role="alert">

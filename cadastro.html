@@ -230,11 +230,58 @@
                 
                 // Initialize form validation
                 initFormValidation();
+                
+                // Check if editing mode
+                const urlParams = new URLSearchParams(window.location.search);
+                const editId = urlParams.get('edit');
+                if (editId) {
+                    await loadDevolutionForEdit(editId);
+                }
             } catch (error) {
                 console.error('Error initializing form:', error);
                 showAlert('Erro ao inicializar formulário: ' + error.message, 'danger');
             }
         });
+
+        async function loadDevolutionForEdit(id) {
+            try {
+                const devolution = await getDevolution(parseInt(id));
+                if (!devolution) {
+                    showAlert('Devolução não encontrada.', 'warning');
+                    return;
+                }
+
+                // Update page title
+                document.querySelector('.page-header h1').textContent = 'Editar Devolução';
+                document.querySelector('.page-header p').textContent = 'Edite os dados da devolução selecionada';
+
+                // Update form title
+                document.querySelector('.card-header h5').innerHTML = '<i class="fas fa-edit me-2"></i>Editar Devolução';
+
+                // Update button text
+                document.querySelector('#devolutionForm button[type="submit"]').innerHTML = '<i class="fas fa-save me-1"></i>Atualizar Devolução';
+
+                // Fill form with existing data
+                document.getElementById('codigoPeca').value = devolution.codigo_peca;
+                document.getElementById('descricaoPeca').value = devolution.descricao_peca;
+                document.getElementById('quantidadeDevolvida').value = devolution.quantidade_devolvida;
+                document.getElementById('cliente').value = devolution.cliente;
+                document.getElementById('mecanico').value = devolution.mecanico === devolution.cliente ? '' : devolution.mecanico;
+                document.getElementById('requisicaoVenda').value = devolution.requisicao_venda;
+                document.getElementById('acaoRequisicao').value = devolution.acao_requisicao;
+                document.getElementById('dataVenda').value = devolution.data_venda;
+                document.getElementById('dataDevolucao').value = devolution.data_devolucao;
+                document.getElementById('observacao').value = devolution.observacao || '';
+
+                // Store edit ID for later use
+                window.editingDevolutionId = parseInt(id);
+
+                showAlert('Dados carregados para edição.', 'info');
+            } catch (error) {
+                console.error('Error loading devolution for edit:', error);
+                showAlert('Erro ao carregar devolução: ' + error.message, 'danger');
+            }
+        }
 
         function resetForm() {
             const form = document.getElementById('devolutionForm');

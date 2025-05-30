@@ -160,23 +160,33 @@ async function submitForm() {
             observacao: document.getElementById('observacao').value.trim()
         };
 
-        // Save to database
-        const newId = await addDevolution(formData);
+        // Check if editing or creating
+        if (window.editingDevolutionId) {
+            // Update existing devolution
+            await updateDevolution(window.editingDevolutionId, formData);
+            showAlert('Devolução atualizada com sucesso!', 'success');
+            
+            // Redirect back to search page after successful update
+            setTimeout(() => {
+                window.location.href = 'consulta.html';
+            }, 1500);
+        } else {
+            // Save new devolution to database
+            const newId = await addDevolution(formData);
+            showAlert('Devolução registrada com sucesso!', 'success');
 
-        // Show success message
-        showAlert('Devolução registrada com sucesso!', 'success');
+            // Reset form
+            document.getElementById('devolutionForm').reset();
+            document.getElementById('devolutionForm').classList.remove('was-validated');
+            
+            // Reset date to today
+            document.getElementById('dataDevolucao').value = getTodayDate();
 
-        // Reset form
-        document.getElementById('devolutionForm').reset();
-        document.getElementById('devolutionForm').classList.remove('was-validated');
-        
-        // Reset date to today
-        document.getElementById('dataDevolucao').value = getTodayDate();
+            // Clear any validation messages
+            clearValidationMessages();
 
-        // Clear any validation messages
-        clearValidationMessages();
-
-        console.log('Devolution saved successfully with ID:', newId);
+            console.log('Devolution saved successfully with ID:', newId);
+        }
 
     } catch (error) {
         console.error('Error saving devolution:', error);
