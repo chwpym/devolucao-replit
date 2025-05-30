@@ -17,8 +17,11 @@ async function initPeopleDatabase() {
             // Close current connection
             db.close();
             
+            // Get current version and increment
+            const currentVersion = db.version || DB_VERSION;
+            
             // Open with new version to add the store
-            const newDb = await idb.openDB(DB_NAME, DB_VERSION + 1, {
+            const newDb = await idb.openDB(DB_NAME, currentVersion + 1, {
                 upgrade(db) {
                     // Create people store if it doesn't exist
                     if (!db.objectStoreNames.contains(PEOPLE_STORE_NAME)) {
@@ -118,6 +121,13 @@ async function addPerson(personData) {
 async function getAllPeople() {
     try {
         const db = await getDatabase();
+        
+        // Check if people store exists
+        if (!db.objectStoreNames.contains(PEOPLE_STORE_NAME)) {
+            console.warn('People store does not exist yet');
+            return [];
+        }
+        
         const tx = db.transaction(PEOPLE_STORE_NAME, 'readonly');
         const store = tx.objectStore(PEOPLE_STORE_NAME);
         const result = await store.getAll();
@@ -125,7 +135,7 @@ async function getAllPeople() {
         return result;
     } catch (error) {
         console.error('Error getting all people:', error);
-        throw new Error('Erro ao buscar pessoas: ' + error.message);
+        return [];
     }
 }
 
@@ -302,7 +312,11 @@ async function submitPersonForm() {
         resetPersonForm();
 
         // Reload recent people
-        await loadRecentPeople();
+        try {
+            await loadRecentPeople();
+        } catch (loadError) {
+            console.warn('Could not load recent people:', loadError);
+        }
 
         console.log('Person saved successfully with ID:', newId);
 
@@ -428,14 +442,18 @@ function validatePersonField(field) {
 async function loadRecentPeople() {
     try {
         const people = await getAllPeople();
+        const container = document.getElementById('recentPeople');
+        
+        if (!container) {
+            console.warn('Recent people container not found');
+            return;
+        }
         
         // Sort by created date and get last 5
         const recentPeople = people
-            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .sort((a, b) => new Date(b.created_at || new Date()) - new Date(a.created_at || new Date()))
             .slice(0, 5);
 
-        const container = document.getElementById('recentPeople');
-        
         if (recentPeople.length === 0) {
             container.innerHTML = '<p class="text-muted small">Nenhuma pessoa cadastrada ainda.</p>';
             return;
@@ -444,17 +462,21 @@ async function loadRecentPeople() {
         container.innerHTML = recentPeople.map(person => `
             <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
                 <div>
-                    <div class="fw-bold small">${person.nome}</div>
-                    <div class="text-muted small">${person.tipo}</div>
+                    <div class="fw-bold small">${person.nome || 'N/A'}</div>
+                    <div class="text-muted small">${person.tipo || 'N/A'}</div>
                 </div>
                 <span class="badge bg-${person.status === 'Ativo' ? 'success' : 'secondary'} small">
-                    ${person.status}
+                    ${person.status || 'Ativo'}
                 </span>
             </div>
         `).join('');
 
     } catch (error) {
         console.error('Error loading recent people:', error);
+        const container = document.getElementById('recentPeople');
+        if (container) {
+            container.innerHTML = '<p class="text-muted small">Erro ao carregar pessoas recentes.</p>';
+        }
     }
 }
 

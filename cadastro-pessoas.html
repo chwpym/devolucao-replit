@@ -242,8 +242,12 @@
                 // Initialize form validation
                 initPersonFormValidation();
                 
-                // Load recent people
-                await loadRecentPeople();
+                // Load recent people (with error handling)
+                try {
+                    await loadRecentPeople();
+                } catch (loadError) {
+                    console.warn('Could not load recent people on init:', loadError);
+                }
             } catch (error) {
                 console.error('Error initializing form:', error);
                 showAlert('Erro ao inicializar formulário: ' + error.message, 'danger');
