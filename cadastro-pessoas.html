@@ -248,6 +248,13 @@
                 } catch (loadError) {
                     console.warn('Could not load recent people on init:', loadError);
                 }
+
+                // Check if editing mode
+                const urlParams = new URLSearchParams(window.location.search);
+                const editId = urlParams.get('edit');
+                if (editId) {
+                    await loadPersonForEdit(editId);
+                }
             } catch (error) {
                 console.error('Error initializing form:', error);
                 showAlert('Erro ao inicializar formulário: ' + error.message, 'danger');
@@ -264,6 +271,49 @@
             
             // Clear any alerts
             document.getElementById('alertContainer').innerHTML = '';
+            
+            // Reset page to creation mode
+            document.querySelector('.page-header h1').textContent = 'Cadastrar Pessoa';
+            document.querySelector('.page-header p').textContent = 'Adicione informações de clientes e mecânicos ao sistema';
+            document.querySelector('.card-header h5').innerHTML = '<i class="fas fa-user-plus me-2"></i>Cadastrar Nova Pessoa';
+            document.querySelector('#personForm button[type="submit"]').innerHTML = '<i class="fas fa-save me-1"></i>Salvar Pessoa';
+            window.editingPersonId = null;
+        }
+
+        async function loadPersonForEdit(id) {
+            try {
+                const people = await getAllPeople();
+                const person = people.find(p => p.id === parseInt(id));
+                
+                if (!person) {
+                    showAlert('Pessoa não encontrada.', 'warning');
+                    return;
+                }
+
+                // Update page title and form
+                document.querySelector('.page-header h1').textContent = 'Editar Pessoa';
+                document.querySelector('.page-header p').textContent = 'Edite os dados da pessoa selecionada';
+                document.querySelector('.card-header h5').innerHTML = '<i class="fas fa-edit me-2"></i>Editar Pessoa';
+                document.querySelector('#personForm button[type="submit"]').innerHTML = '<i class="fas fa-save me-1"></i>Atualizar Pessoa';
+
+                // Fill form with existing data
+                document.getElementById('nome').value = person.nome || '';
+                document.getElementById('tipo').value = person.tipo || '';
+                document.getElementById('telefone').value = person.telefone || '';
+                document.getElementById('email').value = person.email || '';
+                document.getElementById('documento').value = person.documento || '';
+                document.getElementById('status').value = person.status || 'Ativo';
+                document.getElementById('endereco').value = person.endereco || '';
+                document.getElementById('observacoes').value = person.observacoes || '';
+
+                // Store edit ID for later use
+                window.editingPersonId = parseInt(id);
+
+                showAlert('Dados carregados para edição.', 'info');
+            } catch (error) {
+                console.error('Error loading person for edit:', error);
+                showAlert('Erro ao carregar pessoa: ' + error.message, 'danger');
+            }
         }
     </script>
 </body>

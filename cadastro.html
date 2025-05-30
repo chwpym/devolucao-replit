@@ -388,6 +388,145 @@
             const today = new Date();
             return today.toISOString().split('T')[0];
         }
+
+        // People management functions for the registration form
+        async function loadPeopleForDropdowns() {
+            try {
+                const people = await getAllPeople();
+                const clienteSelect = document.getElementById('cliente');
+                const mecanicoSelect = document.getElementById('mecanico');
+
+                // Clear existing options (except default)
+                clienteSelect.innerHTML = '<option value="">Selecione um cliente</option>';
+                mecanicoSelect.innerHTML = '<option value="">Mesmo que o cliente</option>';
+
+                // Filter and add people to appropriate dropdowns
+                people.forEach(person => {
+                    if (person.status === 'Ativo') {
+                        // Add to client dropdown if person is client or both
+                        if (person.tipo === 'Cliente' || person.tipo === 'Ambos') {
+                            const clientOption = document.createElement('option');
+                            clientOption.value = person.nome;
+                            clientOption.textContent = person.nome;
+                            clientOption.dataset.personId = person.id;
+                            clienteSelect.appendChild(clientOption);
+                        }
+
+                        // Add to mechanic dropdown if person is mechanic or both
+                        if (person.tipo === 'Mecânico' || person.tipo === 'Ambos') {
+                            const mechOption = document.createElement('option');
+                            mechOption.value = person.nome;
+                            mechOption.textContent = person.nome;
+                            mechOption.dataset.personId = person.id;
+                            mecanicoSelect.appendChild(mechOption);
+                        }
+                    }
+                });
+
+                // Add event listeners to enable/disable edit buttons
+                clienteSelect.addEventListener('change', function() {
+                    const editBtn = document.getElementById('editClienteBtn');
+                    editBtn.disabled = !this.value;
+                });
+
+                mecanicoSelect.addEventListener('change', function() {
+                    const editBtn = document.getElementById('editMecanicoBtn');
+                    editBtn.disabled = !this.value;
+                });
+
+            } catch (error) {
+                console.error('Error loading people for dropdowns:', error);
+                showAlert('Erro ao carregar lista de pessoas: ' + error.message, 'warning');
+            }
+        }
+
+        function openPersonModal(type) {
+            const modal = new bootstrap.Modal(document.getElementById('personModal'));
+            const modalTitle = document.getElementById('personModalLabel');
+            const tipoSelect = document.getElementById('modalTipo');
+
+            // Reset form
+            document.getElementById('modalPersonForm').reset();
+            document.getElementById('modalStatus').value = 'Ativo';
+
+            // Set appropriate type based on which button was clicked
+            if (type === 'cliente') {
+                modalTitle.textContent = 'Cadastrar Cliente';
+                tipoSelect.value = 'Cliente';
+            } else if (type === 'mecanico') {
+                modalTitle.textContent = 'Cadastrar Mecânico';
+                tipoSelect.value = 'Mecânico';
+            }
+
+            // Store the target type for after saving
+            modal._targetType = type;
+            modal.show();
+        }
+
+        async function saveModalPerson() {
+            try {
+                const form = document.getElementById('modalPersonForm');
+                const formData = new FormData(form);
+                
+                const personData = {
+                    nome: formData.get('nome'),
+                    tipo: formData.get('tipo'),
+                    telefone: formData.get('telefone'),
+                    email: formData.get('email'),
+                    documento: formData.get('documento'),
+                    status: formData.get('status'),
+                    endereco: formData.get('endereco'),
+                    observacoes: formData.get('observacoes'),
+                    created_at: new Date().toISOString()
+                };
+
+                // Basic validation
+                if (!personData.nome || !personData.tipo) {
+                    showAlert('Nome e tipo são obrigatórios.', 'warning');
+                    return;
+                }
+
+                const personId = await addPerson(personData);
+                console.log('Person added successfully with ID:', personId);
+
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('personModal'));
+                modal.hide();
+
+                // Reload dropdowns
+                await loadPeopleForDropdowns();
+
+                // Auto-select the newly created person
+                const targetType = modal._targetType;
+                if (targetType === 'cliente') {
+                    document.getElementById('cliente').value = personData.nome;
+                    document.getElementById('editClienteBtn').disabled = false;
+                } else if (targetType === 'mecanico') {
+                    document.getElementById('mecanico').value = personData.nome;
+                    document.getElementById('editMecanicoBtn').disabled = false;
+                }
+
+                showAlert('Pessoa cadastrada com sucesso!', 'success');
+
+            } catch (error) {
+                console.error('Error saving person:', error);
+                showAlert('Erro ao salvar pessoa: ' + error.message, 'danger');
+            }
+        }
+
+        function editSelectedPerson(type) {
+            const selectElement = document.getElementById(type);
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            
+            if (!selectedOption || !selectedOption.dataset.personId) {
+                showAlert('Selecione uma pessoa para editar.', 'warning');
+                return;
+            }
+
+            const personId = selectedOption.dataset.personId;
+            // Redirect to person registration page with edit mode
+            window.open(`cadastro-pessoas.html?edit=${personId}`, '_blank');
+        }
     </script>
 </body>
 </html>

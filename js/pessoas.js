@@ -275,11 +275,24 @@ async function submitPersonForm() {
             status: document.getElementById('status').value
         };
 
-        // Save to database
-        const newId = await addPerson(formData);
-
-        // Show success message
-        showAlert('Pessoa cadastrada com sucesso!', 'success');
+        let personId;
+        
+        // Check if we're editing or creating
+        if (window.editingPersonId) {
+            // Update existing person
+            await updatePerson(window.editingPersonId, formData);
+            personId = window.editingPersonId;
+            showAlert('Pessoa atualizada com sucesso!', 'success');
+            console.log('Person updated successfully with ID:', personId);
+            
+            // Reset editing mode
+            window.editingPersonId = null;
+        } else {
+            // Create new person
+            personId = await addPerson(formData);
+            showAlert('Pessoa cadastrada com sucesso!', 'success');
+            console.log('Person added successfully with ID:', personId);
+        }
 
         // Reset form
         resetPersonForm();
@@ -290,8 +303,6 @@ async function submitPersonForm() {
         } catch (loadError) {
             console.warn('Could not load recent people:', loadError);
         }
-
-        console.log('Person saved successfully with ID:', newId);
 
     } catch (error) {
         console.error('Error saving person:', error);
