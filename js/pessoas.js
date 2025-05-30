@@ -473,3 +473,28 @@ window.getActiveCustomers = getActiveCustomers;
 window.getActiveMechanics = getActiveMechanics;
 window.initPersonFormValidation = initPersonFormValidation;
 window.loadRecentPeople = loadRecentPeople;
+
+/**
+ * Update a person record in the database
+ * @param {number} id - The ID of the person to update
+ * @param {Object} personData - The person data to update
+ * @returns {Promise<boolean>} True if successful
+ */
+async function updatePerson(id, personData) {
+    try {
+        const db = await getDatabase();
+        
+        // Add updated timestamp
+        personData.updated_at = new Date().toISOString();
+        
+        await db.put(PEOPLE_STORE_NAME, { ...personData, id });
+        console.log('Person updated successfully with ID:', id);
+        return true;
+    } catch (error) {
+        console.error('Error updating person:', error);
+        throw new Error('Erro ao atualizar pessoa: ' + error.message);
+    }
+}
+
+// Make updatePerson available globally
+window.updatePerson = updatePerson;
