@@ -4,7 +4,7 @@
  */
 
 const DB_NAME = 'dbRetornos';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_NAME = 'devolucoes';
 
 let dbInstance = null;
@@ -19,22 +19,44 @@ async function initDatabase() {
 
     try {
         dbInstance = await idb.openDB(DB_NAME, DB_VERSION, {
-            upgrade(db) {
-                // Create the main store for devolutions
-                const store = db.createObjectStore(STORE_NAME, {
-                    keyPath: 'id',
-                    autoIncrement: true
-                });
+            upgrade(db, oldVersion, newVersion, transaction) {
+                console.log(`Database upgrade from version ${oldVersion} to ${newVersion}`);
+                
+                // Create the main store for devolutions if it doesn't exist
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    const store = db.createObjectStore(STORE_NAME, {
+                        keyPath: 'id',
+                        autoIncrement: true
+                    });
 
-                // Create indices for fast searching
-                store.createIndex('codigo_peca', 'codigo_peca', { unique: false });
-                store.createIndex('cliente', 'cliente', { unique: false });
-                store.createIndex('mecanico', 'mecanico', { unique: false });
-                store.createIndex('requisicao_venda', 'requisicao_venda', { unique: false });
-                store.createIndex('acao_requisicao', 'acao_requisicao', { unique: false });
-                store.createIndex('data_venda', 'data_venda', { unique: false });
-                store.createIndex('data_devolucao', 'data_devolucao', { unique: false });
-                store.createIndex('descricao_peca', 'descricao_peca', { unique: false });
+                    // Create indices for fast searching
+                    store.createIndex('codigo_peca', 'codigo_peca', { unique: false });
+                    store.createIndex('cliente', 'cliente', { unique: false });
+                    store.createIndex('mecanico', 'mecanico', { unique: false });
+                    store.createIndex('requisicao_venda', 'requisicao_venda', { unique: false });
+                    store.createIndex('acao_requisicao', 'acao_requisicao', { unique: false });
+                    store.createIndex('data_venda', 'data_venda', { unique: false });
+                    store.createIndex('data_devolucao', 'data_devolucao', { unique: false });
+                    store.createIndex('descricao_peca', 'descricao_peca', { unique: false });
+
+                    console.log('Devolutions store created with indices');
+                }
+
+                // Create people store if it doesn't exist (version 2+)
+                if (newVersion >= 2 && !db.objectStoreNames.contains('pessoas')) {
+                    const peopleStore = db.createObjectStore('pessoas', {
+                        keyPath: 'id',
+                        autoIncrement: true
+                    });
+
+                    // Create indices for people store
+                    peopleStore.createIndex('nome', 'nome', { unique: false });
+                    peopleStore.createIndex('tipo', 'tipo', { unique: false });
+                    peopleStore.createIndex('status', 'status', { unique: false });
+                    peopleStore.createIndex('documento', 'documento', { unique: false });
+                    
+                    console.log('People store created with indices');
+                }
 
                 console.log('Database initialized with proper schema and indices');
             }

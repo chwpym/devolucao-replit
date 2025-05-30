@@ -12,37 +12,10 @@ async function initPeopleDatabase() {
     try {
         const db = await getDatabase();
         
-        // Check if store exists, if not we need to upgrade database
+        // People store should now be created automatically in main database init
+        // Just verify it exists
         if (!db.objectStoreNames.contains(PEOPLE_STORE_NAME)) {
-            // Close current connection
-            db.close();
-            
-            // Get current version and increment
-            const currentVersion = db.version || DB_VERSION;
-            
-            // Open with new version to add the store
-            const newDb = await idb.openDB(DB_NAME, currentVersion + 1, {
-                upgrade(db) {
-                    // Create people store if it doesn't exist
-                    if (!db.objectStoreNames.contains(PEOPLE_STORE_NAME)) {
-                        const peopleStore = db.createObjectStore(PEOPLE_STORE_NAME, {
-                            keyPath: 'id',
-                            autoIncrement: true
-                        });
-
-                        // Create indices for fast searching
-                        peopleStore.createIndex('nome', 'nome', { unique: false });
-                        peopleStore.createIndex('tipo', 'tipo', { unique: false });
-                        peopleStore.createIndex('status', 'status', { unique: false });
-                        peopleStore.createIndex('documento', 'documento', { unique: false });
-                        
-                        console.log('People store created successfully');
-                    }
-                }
-            });
-            
-            // Update global db instance
-            dbInstance = newDb;
+            console.warn('People store not found in database - this should be handled by main database initialization');
         }
         
         console.log('People database initialized successfully');
