@@ -121,9 +121,19 @@
                                     <label for="cliente" class="form-label">
                                         Cliente <span class="text-danger">*</span>
                                     </label>
-                                    <input type="text" class="form-control" id="cliente" name="cliente" required>
+                                    <div class="input-group">
+                                        <select class="form-select" id="cliente" name="cliente" required>
+                                            <option value="">Selecione um cliente</option>
+                                        </select>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="openPersonModal('cliente')" title="Cadastrar novo cliente">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-warning" onclick="editSelectedPerson('cliente')" title="Editar cliente selecionado" id="editClienteBtn" disabled>
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
                                     <div class="invalid-feedback">
-                                        Por favor, informe o nome do cliente.
+                                        Por favor, selecione um cliente.
                                     </div>
                                 </div>
 
@@ -131,7 +141,17 @@
                                     <label for="mecanico" class="form-label">
                                         Mecânico <small class="text-muted">(opcional)</small>
                                     </label>
-                                    <input type="text" class="form-control" id="mecanico" name="mecanico" placeholder="Deixe em branco se for o mesmo que o cliente">
+                                    <div class="input-group">
+                                        <select class="form-select" id="mecanico" name="mecanico">
+                                            <option value="">Mesmo que o cliente</option>
+                                        </select>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="openPersonModal('mecanico')" title="Cadastrar novo mecânico">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-warning" onclick="editSelectedPerson('mecanico')" title="Editar mecânico selecionado" id="editMecanicoBtn" disabled>
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
                                     <div class="invalid-feedback">
                                         Nome do mecânico inválido.
                                     </div>
@@ -214,10 +234,73 @@
         </div>
     </footer>
 
+    <!-- Person Registration Modal -->
+    <div class="modal fade" id="personModal" tabindex="-1" aria-labelledby="personModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="personModalLabel">Cadastrar Pessoa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="modalPersonForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="modalNome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="modalNome" name="nome" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="modalTipo" class="form-label">Tipo <span class="text-danger">*</span></label>
+                                <select class="form-select" id="modalTipo" name="tipo" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Cliente">Cliente</option>
+                                    <option value="Mecânico">Mecânico</option>
+                                    <option value="Ambos">Ambos (Cliente e Mecânico)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="modalTelefone" class="form-label">Telefone</label>
+                                <input type="tel" class="form-control" id="modalTelefone" name="telefone">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="modalEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="modalEmail" name="email">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="modalDocumento" class="form-label">CPF/CNPJ</label>
+                                <input type="text" class="form-control" id="modalDocumento" name="documento">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="modalStatus" class="form-label">Status</label>
+                                <select class="form-select" id="modalStatus" name="status">
+                                    <option value="Ativo">Ativo</option>
+                                    <option value="Inativo">Inativo</option>
+                                </select>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="modalEndereco" class="form-label">Endereço</label>
+                                <textarea class="form-control" id="modalEndereco" name="endereco" rows="2"></textarea>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="modalObservacoes" class="form-label">Observações</label>
+                                <textarea class="form-control" id="modalObservacoes" name="observacoes" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="saveModalPerson()">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
     <script src="js/database.js"></script>
     <script src="js/forms.js"></script>
+    <script src="js/pessoas.js"></script>
     <script src="js/utils.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
@@ -227,6 +310,12 @@
                 
                 // Set default date to today
                 document.getElementById('dataDevolucao').value = getTodayDate();
+                
+                // Initialize people database
+                await initPeopleDatabase();
+                
+                // Load people for dropdowns
+                await loadPeopleForDropdowns();
                 
                 // Initialize form validation
                 initFormValidation();
