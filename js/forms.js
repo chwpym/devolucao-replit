@@ -61,7 +61,8 @@ async function validateForm() {
         // Clear previous custom validation
         field.setCustomValidity('');
         
-        if (field.hasAttribute('required') && !value) {
+        // Skip mechanic field for required validation since it's now optional
+        if (field.hasAttribute('required') && fieldName !== 'mecanico' && !value) {
             field.setCustomValidity('Este campo é obrigatório.');
             isValid = false;
             continue;
@@ -151,7 +152,7 @@ async function submitForm() {
             descricao_peca: document.getElementById('descricaoPeca').value.trim(),
             quantidade_devolvida: parseInt(document.getElementById('quantidadeDevolvida').value),
             cliente: document.getElementById('cliente').value.trim(),
-            mecanico: document.getElementById('mecanico').value.trim(),
+            mecanico: document.getElementById('mecanico').value.trim() || document.getElementById('cliente').value.trim(),
             requisicao_venda: document.getElementById('requisicaoVenda').value.trim(),
             acao_requisicao: document.getElementById('acaoRequisicao').value,
             data_venda: document.getElementById('dataVenda').value,

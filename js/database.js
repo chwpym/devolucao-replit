@@ -67,10 +67,10 @@ async function addDevolution(devolutionData) {
     try {
         const db = await getDatabase();
         
-        // Validate required fields
+        // Validate required fields (mechanic is now optional)
         const requiredFields = [
             'codigo_peca', 'descricao_peca', 'quantidade_devolvida',
-            'cliente', 'mecanico', 'requisicao_venda', 'acao_requisicao',
+            'cliente', 'requisicao_venda', 'acao_requisicao',
             'data_venda', 'data_devolucao'
         ];
 
@@ -110,7 +110,7 @@ async function addDevolution(devolutionData) {
             descricao_peca: devolutionData.descricao_peca.toString().trim(),
             quantidade_devolvida: quantity,
             cliente: devolutionData.cliente.toString().trim(),
-            mecanico: devolutionData.mecanico.toString().trim(),
+            mecanico: devolutionData.mecanico ? devolutionData.mecanico.toString().trim() : devolutionData.cliente.toString().trim(),
             requisicao_venda: devolutionData.requisicao_venda.toString().trim(),
             acao_requisicao: devolutionData.acao_requisicao,
             data_venda: devolutionData.data_venda,
