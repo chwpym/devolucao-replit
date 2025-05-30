@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Sistema de Controle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-tools me-2"></i>
+                Sistema de Controle de Retorno de Peças
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cadastro.html">
+                            <i class="fas fa-plus-circle me-1"></i>Cadastrar Devolução
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="consulta.html">
+                            <i class="fas fa-search me-1"></i>Consultar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="relatorio.html">
+                            <i class="fas fa-chart-bar me-1"></i>Relatórios
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="page-header mb-4">
+                    <h1 class="display-5">Relatórios</h1>
+                    <p class="text-muted">Análise e relatórios das devoluções registradas</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Filters -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            Filtros de Período
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label for="reportStartDate" class="form-label">Data Início</label>
+                                <input type="date" class="form-control" id="reportStartDate">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="reportEndDate" class="form-label">Data Fim</label>
+                                <input type="date" class="form-control" id="reportEndDate">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="reportType" class="form-label">Tipo de Data</label>
+                                <select class="form-select" id="reportType">
+                                    <option value="data_devolucao">Data da Devolução</option>
+                                    <option value="data_venda">Data da Venda</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3 d-flex align-items-end">
+                                <button type="button" class="btn btn-primary w-100" onclick="generateReports()">
+                                    <i class="fas fa-chart-bar me-1"></i>Gerar Relatórios
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row mb-4" id="summaryCards" style="display: none;">
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card stat-card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Total Devoluções</h6>
+                                <h3 class="mb-0" id="totalDevolutionsReport">0</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-undo fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card stat-card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Total Peças</h6>
+                                <h3 class="mb-0" id="totalPiecesReport">0</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-cogs fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card stat-card bg-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Clientes Únicos</h6>
+                                <h3 class="mb-0" id="uniqueCustomersReport">0</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-users fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="card stat-card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h6 class="card-title">Mecânicos Únicos</h6>
+                                <h3 class="mb-0" id="uniqueMechanicsReport">0</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-user-cog fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div class="row" id="reportsSection" style="display: none;">
+            <!-- By Parts Report -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cogs me-2"></i>
+                            Relatório por Peças
+                        </h5>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="exportReport('parts')">
+                            <i class="fas fa-download me-1"></i>CSV
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive" style="max-height: 400px;">
+                            <table class="table table-hover table-sm">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Descrição</th>
+                                        <th>Qtd. Total</th>
+                                        <th>Ocorrências</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="partReportTable">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- By Customers Report -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-users me-2"></i>
+                            Relatório por Clientes
+                        </h5>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="exportReport('customers')">
+                            <i class="fas fa-download me-1"></i>CSV
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive" style="max-height: 400px;">
+                            <table class="table table-hover table-sm">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Qtd. Total</th>
+                                        <th>Ocorrências</th>
+                                        <th>Peças Distintas</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customerReportTable">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- By Mechanics Report -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-user-cog me-2"></i>
+                            Relatório por Mecânicos
+                        </h5>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="exportReport('mechanics')">
+                            <i class="fas fa-download me-1"></i>CSV
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive" style="max-height: 400px;">
+                            <table class="table table-hover table-sm">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th>Mecânico</th>
+                                        <th>Qtd. Total</th>
+                                        <th>Ocorrências</th>
+                                        <th>Clientes Únicos</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mechanicReportTable">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- By Action Type Report -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-pie me-2"></i>
+                            Relatório por Ação
+                        </h5>
+                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="exportReport('actions')">
+                            <i class="fas fa-download me-1"></i>CSV
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Ação na Requisição</th>
+                                        <th>Qtd. Total</th>
+                                        <th>Ocorrências</th>
+                                        <th>Percentual</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="actionReportTable">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light mt-5 py-4">
+        <div class="container">
+            <div class="text-center text-muted">
+                <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/reports.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        let currentReportData = null;
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Initialize database
+                await initDatabase();
+                
+                // Set default dates (last 30 days)
+                const today = new Date();
+                const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+                
+                document.getElementById('reportEndDate').value = today.toISOString().split('T')[0];
+                document.getElementById('reportStartDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+                
+                // Generate initial reports
+                await generateReports();
+            } catch (error) {
+                console.error('Error initializing reports:', error);
+                showAlert('Erro ao inicializar relatórios: ' + error.message, 'danger');
+            }
+        });
+
+        async function generateReports() {
+            try {
+                const startDate = document.getElementById('reportStartDate').value;
+                const endDate = document.getElementById('reportEndDate').value;
+                const reportType = document.getElementById('reportType').value;
+
+                if (!startDate || !endDate) {
+                    showAlert('Por favor, selecione as datas de início e fim', 'warning');
+                    return;
+                }
+
+                if (new Date(startDate) > new Date(endDate)) {
+                    showAlert('A data de início deve ser anterior à data de fim', 'warning');
+                    return;
+                }
+
+                // Get filtered data
+                const db = await getDatabase();
+                const tx = db.transaction('devolucoes', 'readonly');
+                const store = tx.objectStore('devolucoes');
+                const allDevolutions = await store.getAll();
+
+                // Filter by date range
+                const filteredData = allDevolutions.filter(dev => {
+                    const compareDate = dev[reportType];
+                    return compareDate >= startDate && compareDate <= endDate;
+                });
+
+                currentReportData = filteredData;
+
+                // Generate all reports
+                generateSummaryCards(filteredData);
+                generatePartReport(filteredData);
+                generateCustomerReport(filteredData);
+                generateMechanicReport(filteredData);
+                generateActionReport(filteredData);
+
+                // Show sections
+                document.getElementById('summaryCards').style.display = 'flex';
+                document.getElementById('reportsSection').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error generating reports:', error);
+                showAlert('Erro ao gerar relatórios: ' + error.message, 'danger');
+            }
+        }
+
+        function generateSummaryCards(data) {
+            const totalDevolutions = data.length;
+            const totalPieces = data.reduce((sum, dev) => sum + dev.quantidade_devolvida, 0);
+            const uniqueCustomers = new Set(data.map(dev => dev.cliente)).size;
+            const uniqueMechanics = new Set(data.map(dev => dev.mecanico)).size;
+
+            document.getElementById('totalDevolutionsReport').textContent = totalDevolutions;
+            document.getElementById('totalPiecesReport').textContent = totalPieces;
+            document.getElementById('uniqueCustomersReport').textContent = uniqueCustomers;
+            document.getElementById('uniqueMechanicsReport').textContent = uniqueMechanics;
+        }
+
+        function generatePartReport(data) {
+            const partStats = {};
+            
+            data.forEach(dev => {
+                const key = `${dev.codigo_peca}|${dev.descricao_peca}`;
+                if (!partStats[key]) {
+                    partStats[key] = {
+                        codigo: dev.codigo_peca,
+                        descricao: dev.descricao_peca,
+                        totalQuantity: 0,
+                        occurrences: 0
+                    };
+                }
+                partStats[key].totalQuantity += dev.quantidade_devolvida;
+                partStats[key].occurrences++;
+            });
+
+            const sortedParts = Object.values(partStats)
+                .sort((a, b) => b.totalQuantity - a.totalQuantity);
+
+            const tbody = document.getElementById('partReportTable');
+            tbody.innerHTML = sortedParts.map(part => `
+                <tr>
+                    <td>${part.codigo}</td>
+                    <td>${part.descricao}</td>
+                    <td>
+                        <span class="badge bg-primary">${part.totalQuantity}</span>
+                    </td>
+                    <td>${part.occurrences}</td>
+                </tr>
+            `).join('');
+        }
+
+        function generateCustomerReport(data) {
+            const customerStats = {};
+            
+            data.forEach(dev => {
+                if (!customerStats[dev.cliente]) {
+                    customerStats[dev.cliente] = {
+                        name: dev.cliente,
+                        totalQuantity: 0,
+                        occurrences: 0,
+                        parts: new Set()
+                    };
+                }
+                customerStats[dev.cliente].totalQuantity += dev.quantidade_devolvida;
+                customerStats[dev.cliente].occurrences++;
+                customerStats[dev.cliente].parts.add(dev.codigo_peca);
+            });
+
+            const sortedCustomers = Object.values(customerStats)
+                .sort((a, b) => b.totalQuantity - a.totalQuantity);
+
+            const tbody = document.getElementById('customerReportTable');
+            tbody.innerHTML = sortedCustomers.map(customer => `
+                <tr>
+                    <td>${customer.name}</td>
+                    <td>
+                        <span class="badge bg-primary">${customer.totalQuantity}</span>
+                    </td>
+                    <td>${customer.occurrences}</td>
+                    <td>${customer.parts.size}</td>
+                </tr>
+            `).join('');
+        }
+
+        function generateMechanicReport(data) {
+            const mechanicStats = {};
+            
+            data.forEach(dev => {
+                if (!mechanicStats[dev.mecanico]) {
+                    mechanicStats[dev.mecanico] = {
+                        name: dev.mecanico,
+                        totalQuantity: 0,
+                        occurrences: 0,
+                        customers: new Set()
+                    };
+                }
+                mechanicStats[dev.mecanico].totalQuantity += dev.quantidade_devolvida;
+                mechanicStats[dev.mecanico].occurrences++;
+                mechanicStats[dev.mecanico].customers.add(dev.cliente);
+            });
+
+            const sortedMechanics = Object.values(mechanicStats)
+                .sort((a, b) => b.totalQuantity - a.totalQuantity);
+
+            const tbody = document.getElementById('mechanicReportTable');
+            tbody.innerHTML = sortedMechanics.map(mechanic => `
+                <tr>
+                    <td>${mechanic.name}</td>
+                    <td>
+                        <span class="badge bg-primary">${mechanic.totalQuantity}</span>
+                    </td>
+                    <td>${mechanic.occurrences}</td>
+                    <td>${mechanic.customers.size}</td>
+                </tr>
+            `).join('');
+        }
+
+        function generateActionReport(data) {
+            const actionStats = {};
+            
+            data.forEach(dev => {
+                if (!actionStats[dev.acao_requisicao]) {
+                    actionStats[dev.acao_requisicao] = {
+                        action: dev.acao_requisicao,
+                        totalQuantity: 0,
+                        occurrences: 0
+                    };
+                }
+                actionStats[dev.acao_requisicao].totalQuantity += dev.quantidade_devolvida;
+                actionStats[dev.acao_requisicao].occurrences++;
+            });
+
+            const totalOccurrences = Object.values(actionStats)
+                .reduce((sum, action) => sum + action.occurrences, 0);
+
+            const sortedActions = Object.values(actionStats)
+                .sort((a, b) => b.totalQuantity - a.totalQuantity);
+
+            const tbody = document.getElementById('actionReportTable');
+            tbody.innerHTML = sortedActions.map(action => `
+                <tr>
+                    <td>
+                        <span class="badge ${action.action === 'Alterada' ? 'bg-warning' : 'bg-danger'} text-dark">
+                            ${action.action}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge bg-primary">${action.totalQuantity}</span>
+                    </td>
+                    <td>${action.occurrences}</td>
+                    <td>${((action.occurrences / totalOccurrences) * 100).toFixed(1)}%</td>
+                </tr>
+            `).join('');
+        }
+
+        function exportReport(reportType) {
+            if (!currentReportData || currentReportData.length === 0) {
+                showAlert('Nenhum dado para exportar', 'warning');
+                return;
+            }
+
+            const startDate = document.getElementById('reportStartDate').value;
+            const endDate = document.getElementById('reportEndDate').value;
+            const filename = `relatorio_${reportType}_${startDate}_${endDate}.csv`;
+
+            let csvContent = '';
+            let headers = [];
+            let rows = [];
+
+            switch (reportType) {
+                case 'parts':
+                    headers = ['Código da Peça', 'Descrição', 'Quantidade Total', 'Ocorrências'];
+                    const partStats = {};
+                    currentReportData.forEach(dev => {
+                        const key = `${dev.codigo_peca}|${dev.descricao_peca}`;
+                        if (!partStats[key]) {
+                            partStats[key] = {
+                                codigo: dev.codigo_peca,
+                                descricao: dev.descricao_peca,
+                                totalQuantity: 0,
+                                occurrences: 0
+                            };
+                        }
+                        partStats[key].totalQuantity += dev.quantidade_devolvida;
+                        partStats[key].occurrences++;
+                    });
+                    rows = Object.values(partStats).map(part => [
+                        `"${part.codigo}"`,
+                        `"${part.descricao}"`,
+                        part.totalQuantity,
+                        part.occurrences
+                    ]);
+                    break;
+
+                case 'customers':
+                    headers = ['Cliente', 'Quantidade Total', 'Ocorrências', 'Peças Distintas'];
+                    const customerStats = {};
+                    currentReportData.forEach(dev => {
+                        if (!customerStats[dev.cliente]) {
+                            customerStats[dev.cliente] = {
+                                name: dev.cliente,
+                                totalQuantity: 0,
+                                occurrences: 0,
+                                parts: new Set()
+                            };
+                        }
+                        customerStats[dev.cliente].totalQuantity += dev.quantidade_devolvida;
+                        customerStats[dev.cliente].occurrences++;
+                        customerStats[dev.cliente].parts.add(dev.codigo_peca);
+                    });
+                    rows = Object.values(customerStats).map(customer => [
+                        `"${customer.name}"`,
+                        customer.totalQuantity,
+                        customer.occurrences,
+                        customer.parts.size
+                    ]);
+                    break;
+
+                case 'mechanics':
+                    headers = ['Mecânico', 'Quantidade Total', 'Ocorrências', 'Clientes Únicos'];
+                    const mechanicStats = {};
+                    currentReportData.forEach(dev => {
+                        if (!mechanicStats[dev.mecanico]) {
+                            mechanicStats[dev.mecanico] = {
+                                name: dev.mecanico,
+                                totalQuantity: 0,
+                                occurrences: 0,
+                                customers: new Set()
+                            };
+                        }
+                        mechanicStats[dev.mecanico].totalQuantity += dev.quantidade_devolvida;
+                        mechanicStats[dev.mecanico].occurrences++;
+                        mechanicStats[dev.mecanico].customers.add(dev.cliente);
+                    });
+                    rows = Object.values(mechanicStats).map(mechanic => [
+                        `"${mechanic.name}"`,
+                        mechanic.totalQuantity,
+                        mechanic.occurrences,
+                        mechanic.customers.size
+                    ]);
+                    break;
+
+                case 'actions':
+                    headers = ['Ação na Requisição', 'Quantidade Total', 'Ocorrências', 'Percentual'];
+                    const actionStats = {};
+                    currentReportData.forEach(dev => {
+                        if (!actionStats[dev.acao_requisicao]) {
+                            actionStats[dev.acao_requisicao] = {
+                                action: dev.acao_requisicao,
+                                totalQuantity: 0,
+                                occurrences: 0
+                            };
+                        }
+                        actionStats[dev.acao_requisicao].totalQuantity += dev.quantidade_devolvida;
+                        actionStats[dev.acao_requisicao].occurrences++;
+                    });
+                    const totalOccurrences = Object.values(actionStats)
+                        .reduce((sum, action) => sum + action.occurrences, 0);
+                    rows = Object.values(actionStats).map(action => [
+                        `"${action.action}"`,
+                        action.totalQuantity,
+                        action.occurrences,
+                        `${((action.occurrences / totalOccurrences) * 100).toFixed(1)}%`
+                    ]);
+                    break;
+            }
+
+            csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showAlert('Relatório exportado com sucesso!', 'success');
+        }
+
+        function showAlert(message, type) {
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            const alertContainer = document.createElement('div');
+            alertContainer.innerHTML = alertHtml;
+            alertContainer.style.position = 'fixed';
+            alertContainer.style.top = '20px';
+            alertContainer.style.right = '20px';
+            alertContainer.style.zIndex = '9999';
+            alertContainer.style.minWidth = '300px';
+            
+            document.body.appendChild(alertContainer);
+            
+            setTimeout(() => {
+                if (alertContainer.parentNode) {
+                    alertContainer.parentNode.removeChild(alertContainer);
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
