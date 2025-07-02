@@ -50,6 +50,7 @@ async function initDatabase() {
                     });
 
                     // Create indices for people store
+                    peopleStore.createIndex('codigo', 'codigo', { unique: true });
                     peopleStore.createIndex('nome', 'nome', { unique: false });
                     peopleStore.createIndex('tipo', 'tipo', { unique: false });
                     peopleStore.createIndex('status', 'status', { unique: false });

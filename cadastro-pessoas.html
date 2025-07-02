@@ -87,7 +87,13 @@
                         <form id="personForm" novalidate>
                             <div class="row">
                                 <!-- Basic Information -->
-                                <div class="col-md-8 mb-3">
+                                <div class="col-md-3 mb-3">
+                                    <label for="codigo" class="form-label">Código</label>
+                                    <input type="text" class="form-control" id="codigo" name="codigo" readonly style="background-color: #f8f9fa;">
+                                    <small class="text-muted">Gerado automaticamente</small>
+                                </div>
+                                
+                                <div class="col-md-5 mb-3">
                                     <label for="nome" class="form-label">
                                         Nome Completo <span class="text-danger">*</span>
                                     </label>
@@ -221,7 +227,12 @@
                             <i class="fas fa-list me-2"></i>
                             Pessoas Cadastradas
                         </h5>
-                        <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="showPeopleConsultation()">
+                            <i class="fas fa-search me-1"></i>Consultar
+                        </button>
+                    </div>
+                    <div class="card-body" id="peopleConsultationSection" style="display: none;">
+                        <div class="d-flex gap-2 mb-3">
                             <select class="form-select form-select-sm" id="filterType" style="width: auto;">
                                 <option value="">Todos os tipos</option>
                                 <option value="Cliente">Clientes</option>
@@ -234,8 +245,6 @@
                                 <option value="Inativo">Inativo</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
@@ -590,6 +599,30 @@
             modal.addEventListener('hidden.bs.modal', () => {
                 modal.remove();
             });
+        }
+
+        // Show/hide people consultation section
+        function showPeopleConsultation() {
+            const section = document.getElementById('peopleConsultationSection');
+            const button = document.querySelector('button[onclick="showPeopleConsultation()"]');
+            
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                button.innerHTML = '<i class="fas fa-times me-1"></i>Ocultar';
+                button.onclick = hidePeopleConsultation;
+                
+                // Load people table when showing
+                loadPeopleTable();
+            }
+        }
+
+        function hidePeopleConsultation() {
+            const section = document.getElementById('peopleConsultationSection');
+            const button = document.querySelector('button[onclick="hidePeopleConsultation()"]');
+            
+            section.style.display = 'none';
+            button.innerHTML = '<i class="fas fa-search me-1"></i>Consultar';
+            button.onclick = showPeopleConsultation;
         }
     </script>
 </body>

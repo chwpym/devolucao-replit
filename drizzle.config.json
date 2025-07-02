@@ -1,0 +1,8 @@
+{
+  "schema": "./shared/schema.ts",
+  "out": "./drizzle",
+  "dialect": "postgresql",
+  "dbCredentials": {
+    "url": "postgresql://neondb_owner:npg_gH96PNLCmyVt@ep-winter-scene-a5nrzqjt.us-east-2.aws.neon.tech/neondb?sslmode=require"
+  }
+}

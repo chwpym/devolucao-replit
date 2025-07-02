@@ -403,27 +403,31 @@
                 clienteSelect.innerHTML = '<option value="">Selecione um cliente</option>';
                 mecanicoSelect.innerHTML = '<option value="">Mesmo que o cliente</option>';
 
-                // Filter and add people to appropriate dropdowns
-                people.forEach(person => {
-                    if (person.status === 'Ativo') {
-                        // Add to client dropdown if person is client or both
-                        if (person.tipo === 'Cliente' || person.tipo === 'Ambos') {
-                            const clientOption = document.createElement('option');
-                            clientOption.value = person.nome;
-                            clientOption.textContent = person.nome;
-                            clientOption.dataset.personId = person.id;
-                            clienteSelect.appendChild(clientOption);
-                        }
+                // Filter people by type and sort alphabetically
+                const clientes = people.filter(person => 
+                    person.status === 'Ativo' && (person.tipo === 'Cliente' || person.tipo === 'Ambos')
+                ).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
 
-                        // Add to mechanic dropdown if person is mechanic or both
-                        if (person.tipo === 'Mecânico' || person.tipo === 'Ambos') {
-                            const mechOption = document.createElement('option');
-                            mechOption.value = person.nome;
-                            mechOption.textContent = person.nome;
-                            mechOption.dataset.personId = person.id;
-                            mecanicoSelect.appendChild(mechOption);
-                        }
-                    }
+                const mecanicos = people.filter(person => 
+                    person.status === 'Ativo' && (person.tipo === 'Mecânico' || person.tipo === 'Ambos')
+                ).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+
+                // Add clients to dropdown
+                clientes.forEach(person => {
+                    const clientOption = document.createElement('option');
+                    clientOption.value = person.nome;
+                    clientOption.textContent = `${person.codigo ? person.codigo + ' - ' : ''}${person.nome}`;
+                    clientOption.dataset.personId = person.id;
+                    clienteSelect.appendChild(clientOption);
+                });
+
+                // Add mechanics to dropdown
+                mecanicos.forEach(person => {
+                    const mechOption = document.createElement('option');
+                    mechOption.value = person.nome;
+                    mechOption.textContent = `${person.codigo ? person.codigo + ' - ' : ''}${person.nome}`;
+                    mechOption.dataset.personId = person.id;
+                    mecanicoSelect.appendChild(mechOption);
                 });
 
                 // Add event listeners to enable/disable edit buttons

@@ -1,0 +1,67 @@
+{
+  "name": "Sistema de Controle de Retorno de Peças",
+  "short_name": "Controle Peças",
+  "description": "Sistema para controle e gestão de retorno de peças automotivas",
+  "version": "1.0.0",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#667eea",
+  "background_color": "#ffffff",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiM2NjdFRUEiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0yMi43IDEzLjJMMjIgMTMuN0wyMCAyLjhDMjAgMS43IDE5LjMgMSAxOC4yIDFIOS44Qzg3IDEgOCAxLjcgOCAyLjhWMy41SDE4VjEySDE2VjE0SDE4VjE5VjIxVjIySDZWMjFWMTlWOEg0VjE5SDJWOUMxLjUgOS4xIDEgOS42IDEgMTAuMlYxOC4yQzEgMTkuMyAxLjcgMjAgMi44IDIwSDQuMlYyMS4yQzQuMiAyMi4zIDQuOSAyMyA2IDIzSDE5QzIwLjEgMjMgMjAuOCAyMi4zIDIwLjggMjEuMlYyMC44QzIxIDIwLjcgMjEuMiAyMC42IDIxLjMgMjAuNUwyMS44IDIwLjFMMjIuNyAxOVMxNC4yIDEzLjYgMTMuNyAxMy4yWk01IDE4SDE3VjE2SDVWMThaTTUgMTNIMTdWMTFINVYxM1oiLz4KPHN2Zz4KPC9zdmc+",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iNjQiIGZpbGw9IiM2NjdFRUEiLz4KPHN2ZyB4PSIxMjgiIHk9IjEyOCIgd2lkdGg9IjI1NiIgaGVpZ2h0PSIyNTYiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPgo8cGF0aCBkPSJNMjIuNyAxMy4yTDIyIDEzLjdMMjAgMi44QzIwIDEuNyAxOS4zIDEgMTguMiAxSDkuOEM4LjcgMSA4IDEuNyA4IDIuOFYzLjVIMThWMTJIMTZWMTRIMThWMTlWMjFWMjJINlYyMVYxOVY4SDRWMTlIMlY5QzEuNSA5LjEgMSA5LjYgMSAxMC4yVjE4LjJDMSAxOS4zIDEuNyAyMCAyLjggMjBINC4yVjIxLjJDNC4yIDIyLjMgNC45IDIzIDYgMjNIMTlDMjAuMSAyMyAyMC44IDIyLjMgMjAuOCAyMS4yVjIwLjhDMjEgMjAuNyAyMS4yIDIwLjYgMjEuMyAyMC41TDIxLjggMjAuMUwyMi43IDE5UzE0LjIgMTMuNiAxMy43IDEzLjJaTTUgMThIMTdWMTZINVYxOFpNNSAxM0gxN1YxMUg1VjEzWiIvPgo8L3N2Zz4KPC9zdmc+",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4MCIgaGVpZ2h0PSI3MjAiIHZpZXdCb3g9IjAgMCAxMjgwIDcyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEyODAiIGhlaWdodD0iNzIwIiBmaWxsPSIjRjVGN0ZBIi8+Cjx0ZXh0IHg9IjY0MCIgeT0iMzYwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjY3RUVBIiBmb250LXNpemU9IjQ4Ij5TaXN0ZW1hIGRlIENvbnRyb2xlIGRlIFJldG9ybm8gZGUgUGXDp2FzPC90ZXh0Pgo8L3N2Zz4=",
+      "sizes": "1280x720",
+      "type": "image/svg+xml",
+      "form_factor": "wide",
+      "label": "Dashboard principal do sistema"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Cadastrar Devolução",
+      "short_name": "Nova Devolução",
+      "description": "Cadastrar uma nova devolução de peça",
+      "url": "/cadastro.html",
+      "icons": [
+        {
+          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMTIiIGZpbGw9IiM2NjdFRUEiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xOSAzSDE2VjFIMTVWM0g5VjFIOFYzSDVDMy45IDMgMyAzLjkgMyA1VjE5QzMgMjAuMSAzLjkgMjEgNSAyMUgxOUMyMC4xIDIxIDIxIDIwLjEgMjEgMTlWNUMyMSAzLjkgMjAuMSAzIDE5IDNaTTE5IDE5SDVWOEgxOVYxOVpNMTEgMTVIMTNWMTdIMTFWMTVaTTExIDEwSDEzVjEySDExVjEwWiIvPgo8L3N2Zz4KPC9zdmc+",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Consultar",
+      "short_name": "Consultar",
+      "description": "Consultar devoluções cadastradas",
+      "url": "/consulta.html",
+      "icons": [
+        {
+          "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiByeD0iMTIiIGZpbGw9IiM2NjdFRUEiLz4KPHN2ZyB4PSIyNCIgeT0iMjQiIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xNS41IDE0SDE0LjcxTDE0LjQzIDEzLjczQzE1LjQxIDEyLjU5IDE2IDExLjExIDE2IDkuNUMxNiA1LjkxIDEzLjA5IDMgOS41IDNTMyA1LjkxIDMgOS41UzUuOTEgMTYgOS41IDE2QzExLjExIDE2IDEyLjU5IDE1LjQxIDEzLjczIDE0LjQzTDE0IDE0LjcxVjE1LjVMMTkgMjAuNDlMMjAuNDkgMTlMMTUuNSAxNFpNOS41IDE0QzcgMTQgNSAxMiA1IDkuNVM3IDUgOS41IDVTMTQgNyAxNCA5LjVTMTIgMTQgOS41IDE0WiIvPgo8L3N2Zz4KPC9zdmc+",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
+}

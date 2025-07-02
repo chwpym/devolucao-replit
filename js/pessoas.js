@@ -166,9 +166,40 @@ async function getActiveMechanics() {
 /**
  * Initialize form validation for the person registration form
  */
+/**
+ * Generate next person code
+ */
+async function generatePersonCode() {
+    try {
+        const allPeople = await getAllPeople();
+        const existingCodes = allPeople.map(p => p.codigo).filter(c => c);
+        
+        let newCode = '';
+        let counter = 1;
+        
+        do {
+            newCode = `P${counter.toString().padStart(4, '0')}`;
+            counter++;
+        } while (existingCodes.includes(newCode));
+        
+        return newCode;
+    } catch (error) {
+        console.error('Error generating person code:', error);
+        return `P${Date.now().toString().slice(-4)}`;
+    }
+}
+
 function initPersonFormValidation() {
     const form = document.getElementById('personForm');
     if (!form) return;
+
+    // Generate automatic code when form loads
+    generatePersonCode().then(codigo => {
+        const codigoField = document.getElementById('codigo');
+        if (codigoField) {
+            codigoField.value = codigo;
+        }
+    });
 
     // Add custom validation styles
     form.addEventListener('submit', async function(event) {
@@ -265,11 +296,12 @@ async function submitPersonForm() {
 
         // Collect form data
         const formData = {
+            codigo: document.getElementById('codigo')?.value?.trim() || await generatePersonCode(),
             nome: document.getElementById('nome').value.trim(),
             tipo: document.getElementById('tipo').value,
             telefone: document.getElementById('telefone').value.trim(),
             email: document.getElementById('email').value.trim(),
-            documento: document.getElementById('documento').value.trim(),
+            documento: document.getElementById('documento')?.value?.trim() || '',
             endereco: document.getElementById('endereco').value.trim(),
             observacoes: document.getElementById('observacoes').value.trim(),
             status: document.getElementById('status').value
