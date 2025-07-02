@@ -195,6 +195,78 @@
                             <h6 class="alert-heading">Dica:</h6>
                             <p class="mb-0 small">Na maioria dos casos, a mesma pessoa atua como cliente e mecânico. Selecione "Cliente e Mecânico" para facilitar o cadastro de devoluções.</p>
                         </div>
+
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-users me-2"></i>
+                                    Pessoas Recentes
+                                </h6>
+                            </div>
+                            <div class="card-body" id="recentPeople">
+                                <p class="text-muted small">Carregando...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- People List Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>
+                            Pessoas Cadastradas
+                        </h5>
+                        <div class="d-flex gap-2">
+                            <select class="form-select form-select-sm" id="filterType" style="width: auto;">
+                                <option value="">Todos os tipos</option>
+                                <option value="Cliente">Clientes</option>
+                                <option value="Mecânico">Mecânicos</option>
+                                <option value="Ambos">Ambos</option>
+                            </select>
+                            <select class="form-select form-select-sm" id="filterStatus" style="width: auto;">
+                                <option value="">Todos os status</option>
+                                <option value="Ativo">Ativo</option>
+                                <option value="Inativo">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <button class="btn btn-link p-0 text-decoration-none" onclick="sortPeopleTable('nome')">
+                                                Nome <i class="fas fa-sort" id="sort-nome"></i>
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <button class="btn btn-link p-0 text-decoration-none" onclick="sortPeopleTable('tipo')">
+                                                Tipo <i class="fas fa-sort" id="sort-tipo"></i>
+                                            </button>
+                                        </th>
+                                        <th>Telefone</th>
+                                        <th>Email</th>
+                                        <th>
+                                            <button class="btn btn-link p-0 text-decoration-none" onclick="sortPeopleTable('status')">
+                                                Status <i class="fas fa-sort" id="sort-status"></i>
+                                            </button>
+                                        </th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="peopleTableBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">Carregando pessoas...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -255,6 +327,16 @@
                 if (editId) {
                     await loadPersonForEdit(editId);
                 }
+
+                // Load people table
+                await loadPeopleTable();
+
+                // Add filter event listeners
+                document.getElementById('filterType').addEventListener('change', filterPeopleTable);
+                document.getElementById('filterStatus').addEventListener('change', filterPeopleTable);
+                
+                // Initialize backup reminder
+                initBackupReminder();
             } catch (error) {
                 console.error('Error initializing form:', error);
                 showAlert('Erro ao inicializar formulário: ' + error.message, 'danger');
@@ -314,6 +396,200 @@
                 console.error('Error loading person for edit:', error);
                 showAlert('Erro ao carregar pessoa: ' + error.message, 'danger');
             }
+        }
+
+        // People table management variables
+        let allPeople = [];
+        let sortColumn = 'nome';
+        let sortDirection = 'asc';
+
+        // Load and display people table
+        async function loadPeopleTable() {
+            try {
+                allPeople = await getAllPeople();
+                // Sort by name initially
+                allPeople.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+                displayPeopleTable(allPeople);
+            } catch (error) {
+                console.error('Error loading people table:', error);
+                document.getElementById('peopleTableBody').innerHTML = 
+                    '<tr><td colspan="6" class="text-center text-danger">Erro ao carregar pessoas</td></tr>';
+            }
+        }
+
+        // Display people in table
+        function displayPeopleTable(people) {
+            const tbody = document.getElementById('peopleTableBody');
+            
+            if (people.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Nenhuma pessoa encontrada</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = people.map(person => `
+                <tr>
+                    <td><strong>${person.nome}</strong></td>
+                    <td>
+                        <span class="badge bg-${getTypeBadgeColor(person.tipo)}">${person.tipo}</span>
+                    </td>
+                    <td>${person.telefone || '-'}</td>
+                    <td>${person.email || '-'}</td>
+                    <td>
+                        <span class="badge bg-${person.status === 'Ativo' ? 'success' : 'secondary'}">${person.status}</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="editPerson(${person.id})" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-info" onclick="viewPersonDetails(${person.id})" title="Ver detalhes">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Get badge color for person type
+        function getTypeBadgeColor(tipo) {
+            switch(tipo) {
+                case 'Cliente': return 'primary';
+                case 'Mecânico': return 'warning';
+                case 'Ambos': return 'success';
+                default: return 'secondary';
+            }
+        }
+
+        // Sort people table
+        function sortPeopleTable(column) {
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+
+            // Update sort icons
+            document.querySelectorAll('[id^="sort-"]').forEach(icon => {
+                icon.className = 'fas fa-sort';
+            });
+
+            const currentIcon = document.getElementById(`sort-${column}`);
+            currentIcon.className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'}`;
+
+            // Sort the data
+            const filteredPeople = getCurrentFilteredPeople();
+            filteredPeople.sort((a, b) => {
+                let aVal = a[column] || '';
+                let bVal = b[column] || '';
+                
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+
+                if (sortDirection === 'asc') {
+                    return aVal.localeCompare ? aVal.localeCompare(bVal, 'pt-BR') : aVal < bVal ? -1 : 1;
+                } else {
+                    return bVal.localeCompare ? bVal.localeCompare(aVal, 'pt-BR') : bVal < aVal ? -1 : 1;
+                }
+            });
+
+            displayPeopleTable(filteredPeople);
+        }
+
+        // Filter people table
+        function filterPeopleTable() {
+            const filteredPeople = getCurrentFilteredPeople();
+            displayPeopleTable(filteredPeople);
+        }
+
+        // Get currently filtered people
+        function getCurrentFilteredPeople() {
+            const typeFilter = document.getElementById('filterType').value;
+            const statusFilter = document.getElementById('filterStatus').value;
+
+            return allPeople.filter(person => {
+                const matchesType = !typeFilter || person.tipo === typeFilter;
+                const matchesStatus = !statusFilter || person.status === statusFilter;
+                return matchesType && matchesStatus;
+            });
+        }
+
+        // Edit person
+        function editPerson(id) {
+            window.location.href = `cadastro-pessoas.html?edit=${id}`;
+        }
+
+        // View person details
+        function viewPersonDetails(personId) {
+            const person = allPeople.find(p => p.id === personId);
+            if (!person) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Detalhes da Pessoa</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-sm-4"><strong>Nome:</strong></div>
+                                <div class="col-sm-8">${person.nome}</div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-sm-4"><strong>Tipo:</strong></div>
+                                <div class="col-sm-8"><span class="badge bg-${getTypeBadgeColor(person.tipo)}">${person.tipo}</span></div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-sm-4"><strong>Telefone:</strong></div>
+                                <div class="col-sm-8">${person.telefone || 'Não informado'}</div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-sm-4"><strong>Email:</strong></div>
+                                <div class="col-sm-8">${person.email || 'Não informado'}</div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-sm-4"><strong>Documento:</strong></div>
+                                <div class="col-sm-8">${person.documento || 'Não informado'}</div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-sm-4"><strong>Status:</strong></div>
+                                <div class="col-sm-8"><span class="badge bg-${person.status === 'Ativo' ? 'success' : 'secondary'}">${person.status}</span></div>
+                            </div>
+                            ${person.endereco ? `
+                                <div class="row mt-2">
+                                    <div class="col-sm-4"><strong>Endereço:</strong></div>
+                                    <div class="col-sm-8">${person.endereco}</div>
+                                </div>
+                            ` : ''}
+                            ${person.observacoes ? `
+                                <div class="row mt-2">
+                                    <div class="col-sm-4"><strong>Observações:</strong></div>
+                                    <div class="col-sm-8">${person.observacoes}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            <button type="button" class="btn btn-primary" onclick="editPerson(${person.id}); this.closest('.modal').remove();">
+                                <i class="fas fa-edit me-1"></i>Editar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            const bootstrapModal = new bootstrap.Modal(modal);
+            bootstrapModal.show();
+            
+            // Remove modal from DOM when hidden
+            modal.addEventListener('hidden.bs.modal', () => {
+                modal.remove();
+            });
         }
     </script>
 </body>

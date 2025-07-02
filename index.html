@@ -227,6 +227,9 @@
                 
                 // Load recent devolutions
                 await loadRecentDevolutions();
+                
+                // Initialize backup reminder
+                initBackupReminder();
             } catch (error) {
                 console.error('Error loading dashboard:', error);
                 showAlert('Erro ao carregar dashboard: ' + error.message, 'danger');

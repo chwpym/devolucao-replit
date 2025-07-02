@@ -326,6 +326,9 @@
                 if (editId) {
                     await loadDevolutionForEdit(editId);
                 }
+                
+                // Initialize backup reminder
+                initBackupReminder();
             } catch (error) {
                 console.error('Error initializing form:', error);
                 showAlert('Erro ao inicializar formulário: ' + error.message, 'danger');

@@ -161,15 +161,51 @@
                             <table class="table table-hover">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Código</th>
-                                        <th>Descrição</th>
-                                        <th>Quantidade</th>
-                                        <th>Cliente</th>
-                                        <th>Mecânico</th>
-                                        <th>Req. Venda</th>
-                                        <th>Ação</th>
-                                        <th>Data Venda</th>
-                                        <th>Data Devolução</th>
+                                        <th>
+                                            <button class="btn btn-link p-0 text-decoration-none" onclick="sortSearchTable('codigo_peca')">
+                                                Código <i class="fas fa-sort" id="sort-codigo_peca"></i>
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <button class="btn btn-link p-0 text-decoration-none" onclick="sortSearchTable('descricao_peca')">
+                                                Descrição <i class="fas fa-sort" id="sort-descricao_peca"></i>
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <button class="btn btn-link p-0 text-decoration-none" onclick="sortSearchTable('quantidade_devolvida')">
+                                                Quantidade <i class="fas fa-sort" id="sort-quantidade_devolvida"></i>
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <button class="btn btn-link p-0 text-decoration-none" onclick="sortSearchTable('cliente')">
+                                                Cliente <i class="fas fa-sort" id="sort-cliente"></i>
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <button class="btn btn-link p-0 text-decoration-none" onclick="sortSearchTable('mecanico')">
+                                                Mecânico <i class="fas fa-sort" id="sort-mecanico"></i>
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <button class="btn btn-link p-0 text-decoration-none" onclick="sortSearchTable('requisicao_venda')">
+                                                Req. Venda <i class="fas fa-sort" id="sort-requisicao_venda"></i>
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <button class="btn btn-link p-0 text-decoration-none" onclick="sortSearchTable('acao_requisicao')">
+                                                Ação <i class="fas fa-sort" id="sort-acao_requisicao"></i>
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <button class="btn btn-link p-0 text-decoration-none" onclick="sortSearchTable('data_venda')">
+                                                Data Venda <i class="fas fa-sort" id="sort-data_venda"></i>
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <button class="btn btn-link p-0 text-decoration-none" onclick="sortSearchTable('data_devolucao')">
+                                                Data Devolução <i class="fas fa-sort" id="sort-data_devolucao"></i>
+                                            </button>
+                                        </th>
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
@@ -259,11 +295,18 @@
                 
                 // Load all devolutions initially
                 await loadAllDevolutions();
+                
+                // Initialize backup reminder
+                initBackupReminder();
             } catch (error) {
                 console.error('Error initializing search:', error);
                 showAlert('Erro ao inicializar busca: ' + error.message, 'danger');
             }
         });
+
+        // Sorting variables for search results
+        let searchSortColumn = 'data_devolucao';
+        let searchSortDirection = 'desc';
 
         async function loadAllDevolutions() {
             try {
@@ -546,6 +589,53 @@
                     alertContainer.parentNode.removeChild(alertContainer);
                 }
             }, 5000);
+        }
+
+        // Sort search results table
+        function sortSearchTable(column) {
+            if (searchSortColumn === column) {
+                searchSortDirection = searchSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                searchSortColumn = column;
+                searchSortDirection = 'asc';
+            }
+
+            // Update sort icons
+            document.querySelectorAll('[id^="sort-"]').forEach(icon => {
+                icon.className = 'fas fa-sort';
+            });
+
+            const currentIcon = document.getElementById(`sort-${column}`);
+            if (currentIcon) {
+                currentIcon.className = `fas fa-sort-${searchSortDirection === 'asc' ? 'up' : 'down'}`;
+            }
+
+            // Sort the current results
+            currentResults.sort((a, b) => {
+                let aVal = a[column] || '';
+                let bVal = b[column] || '';
+                
+                // Handle date columns
+                if (column.includes('data')) {
+                    aVal = new Date(aVal);
+                    bVal = new Date(bVal);
+                } else if (column === 'quantidade_devolvida') {
+                    aVal = parseInt(aVal) || 0;
+                    bVal = parseInt(bVal) || 0;
+                } else if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+
+                if (searchSortDirection === 'asc') {
+                    return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+                } else {
+                    return bVal < aVal ? -1 : bVal > aVal ? 1 : 0;
+                }
+            });
+
+            // Redisplay sorted results
+            displayResults(currentResults);
         }
     </script>
 </body>

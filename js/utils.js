@@ -607,3 +607,139 @@ window.getQueryParam = getQueryParam;
 window.setQueryParam = setQueryParam;
 window.storage = storage;
 
+/**
+ * Initialize backup reminder popup
+ */
+function initBackupReminder() {
+    let hasShownReminder = sessionStorage.getItem('backupReminderShown') === 'true';
+    
+    // Show reminder when user tries to close/leave the page
+    window.addEventListener('beforeunload', function(event) {
+        // Don't show multiple times in same session
+        if (hasShownReminder) return;
+        
+        // Check if there's any data to backup
+        checkDataForBackup().then(hasData => {
+            if (hasData && !hasShownReminder) {
+                hasShownReminder = true;
+                sessionStorage.setItem('backupReminderShown', 'true');
+                event.preventDefault();
+                event.returnValue = 'Você tem dados importantes no sistema. Lembre-se de fazer backup antes de sair!';
+                return event.returnValue;
+            }
+        });
+    });
+
+    // Also show a gentle reminder popup after some activity
+    setTimeout(() => {
+        if (!hasShownReminder) {
+            checkDataForBackup().then(hasData => {
+                if (hasData) {
+                    showBackupReminderModal();
+                    hasShownReminder = true;
+                    sessionStorage.setItem('backupReminderShown', 'true');
+                }
+            });
+        }
+    }, 180000); // Show after 3 minutes of activity
+}
+
+/**
+ * Check if there's data worth backing up
+ */
+async function checkDataForBackup() {
+    try {
+        if (typeof getAllDevolutions === 'function') {
+            const devolutions = await getAllDevolutions();
+            if (devolutions && devolutions.length > 0) return true;
+        }
+        
+        if (typeof getAllPeople === 'function') {
+            const people = await getAllPeople();
+            if (people && people.length > 0) return true;
+        }
+        
+        return false;
+    } catch (error) {
+        console.warn('Could not check data for backup:', error);
+        return false;
+    }
+}
+
+/**
+ * Show backup reminder modal
+ */
+function showBackupReminderModal() {
+    // Don't show if already exists
+    if (document.getElementById('backupReminderModal')) return;
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.id = 'backupReminderModal';
+    modal.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Lembrete de Backup
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Importante:</strong> Seus dados são armazenados localmente no navegador.
+                    </div>
+                    <p>Para evitar perda de dados, recomendamos fazer backup regularmente:</p>
+                    <ul>
+                        <li>Acesse a página de <strong>Backup</strong> no menu</li>
+                        <li>Clique em <strong>"Exportar Backup"</strong></li>
+                        <li>Salve o arquivo em local seguro</li>
+                    </ul>
+                    <div class="alert alert-warning mb-0">
+                        <small>
+                            <i class="fas fa-warning me-1"></i>
+                            Dados podem ser perdidos se o navegador for resetado ou cookies forem limpos.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Lembrar mais tarde
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="goToBackupPage()">
+                        <i class="fas fa-download me-1"></i>
+                        Fazer Backup Agora
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
+    
+    // Remove modal from DOM when hidden
+    modal.addEventListener('hidden.bs.modal', () => {
+        modal.remove();
+    });
+}
+
+/**
+ * Navigate to backup page
+ */
+function goToBackupPage() {
+    const modal = document.getElementById('backupReminderModal');
+    if (modal) {
+        bootstrap.Modal.getInstance(modal).hide();
+    }
+    window.location.href = 'backup.html';
+}
+
+// Make functions available globally
+window.initBackupReminder = initBackupReminder;
+window.showBackupReminderModal = showBackupReminderModal;
+window.goToBackupPage = goToBackupPage;
+
