@@ -604,6 +604,504 @@ function generateDashboardSummary(reports) {
     };
 }
 
+/**
+ * Print Management Functions
+ * Handles report printing with formatted layouts
+ */
+
+/**
+ * Print a formatted report
+ * @param {string} reportType - Type of report to print
+ * @param {Array|Object} reportData - Report data to print
+ * @param {Object} options - Print options
+ */
+function printReport(reportType, reportData, options = {}) {
+    const printWindow = window.open('', '_blank');
+    
+    const html = generatePrintHTML(reportType, reportData, options);
+    
+    printWindow.document.write(html);
+    printWindow.document.close();
+    
+    // Wait for content to load, then print
+    printWindow.onload = function() {
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 500);
+    };
+}
+
+/**
+ * Generate HTML for printing
+ * @param {string} reportType - Type of report
+ * @param {Array|Object} reportData - Report data
+ * @param {Object} options - Print options
+ * @returns {string} HTML content for printing
+ */
+function generatePrintHTML(reportType, reportData, options = {}) {
+    const currentDate = new Date().toLocaleDateString('pt-BR');
+    const currentTime = new Date().toLocaleTimeString('pt-BR');
+    
+    let title = 'Relatório de Devoluções';
+    let content = '';
+    
+    switch (reportType) {
+        case 'summary':
+            title = 'Relatório Resumo de Devoluções';
+            content = generateSummaryPrintContent(reportData);
+            break;
+        case 'parts':
+            title = 'Relatório por Peças';
+            content = generatePartsPrintContent(reportData);
+            break;
+        case 'customers':
+            title = 'Relatório por Clientes';
+            content = generateCustomersPrintContent(reportData);
+            break;
+        case 'mechanics':
+            title = 'Relatório por Mecânicos';
+            content = generateMechanicsPrintContent(reportData);
+            break;
+        case 'actions':
+            title = 'Relatório por Ações';
+            content = generateActionsPrintContent(reportData);
+            break;
+        case 'monthly':
+            title = 'Relatório Mensal';
+            content = generateMonthlyPrintContent(reportData);
+            break;
+        case 'detailed':
+            title = 'Relatório Detalhado';
+            content = generateDetailedPrintContent(reportData);
+            break;
+        default:
+            content = '<p>Tipo de relatório não suportado para impressão.</p>';
+    }
+    
+    return `
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>${title}</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 20px;
+                    color: #333;
+                    line-height: 1.4;
+                }
+                .header {
+                    text-align: center;
+                    border-bottom: 2px solid #333;
+                    padding-bottom: 20px;
+                    margin-bottom: 30px;
+                }
+                .header h1 {
+                    margin: 0;
+                    color: #2c3e50;
+                    font-size: 24px;
+                }
+                .header .subtitle {
+                    margin: 5px 0;
+                    color: #666;
+                    font-size: 14px;
+                }
+                .print-info {
+                    text-align: right;
+                    margin-bottom: 20px;
+                    font-size: 12px;
+                    color: #666;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 20px;
+                    font-size: 12px;
+                }
+                th, td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f8f9fa;
+                    font-weight: bold;
+                    text-align: center;
+                }
+                .number {
+                    text-align: right;
+                }
+                .summary-card {
+                    background: #f8f9fa;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    padding: 15px;
+                    margin-bottom: 20px;
+                }
+                .summary-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 15px;
+                    margin-bottom: 20px;
+                }
+                .summary-item {
+                    text-align: center;
+                }
+                .summary-value {
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #2c3e50;
+                }
+                .summary-label {
+                    font-size: 12px;
+                    color: #666;
+                    margin-top: 5px;
+                }
+                .footer {
+                    margin-top: 40px;
+                    padding-top: 20px;
+                    border-top: 1px solid #ddd;
+                    text-align: center;
+                    font-size: 11px;
+                    color: #666;
+                }
+                @media print {
+                    body { margin: 15px; }
+                    .header { page-break-after: avoid; }
+                    table { page-break-inside: avoid; }
+                    .summary-card { page-break-inside: avoid; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Sistema de Controle de Retorno de Peças</h1>
+                <div class="subtitle">${title}</div>
+            </div>
+            
+            <div class="print-info">
+                Impresso em: ${currentDate} às ${currentTime}
+            </div>
+            
+            ${content}
+            
+            <div class="footer">
+                <p>Este relatório foi gerado automaticamente pelo Sistema de Controle de Retorno de Peças</p>
+            </div>
+        </body>
+        </html>
+    `;
+}
+
+/**
+ * Generate summary print content
+ */
+function generateSummaryPrintContent(data) {
+    return `
+        <div class="summary-card">
+            <h3>Resumo Geral</h3>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-value">${data.totalDevolutions || 0}</div>
+                    <div class="summary-label">Total de Devoluções</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">${data.totalQuantity || 0}</div>
+                    <div class="summary-label">Quantidade Total</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">${data.uniqueParts || 0}</div>
+                    <div class="summary-label">Peças Únicas</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value">${data.uniqueCustomers || 0}</div>
+                    <div class="summary-label">Clientes Únicos</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Generate parts print content
+ */
+function generatePartsPrintContent(data) {
+    const tableRows = data.map(item => `
+        <tr>
+            <td>${item.codigo}</td>
+            <td>${item.descricao}</td>
+            <td class="number">${item.totalQuantity}</td>
+            <td class="number">${item.occurrences}</td>
+            <td class="number">${item.percentageOfTotal}%</td>
+            <td class="number">${item.averageQuantityPerOccurrence}</td>
+        </tr>
+    `).join('');
+    
+    return `
+        <table>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                    <th>Qtd. Total</th>
+                    <th>Ocorrências</th>
+                    <th>% do Total</th>
+                    <th>Média/Ocorrência</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${tableRows}
+            </tbody>
+        </table>
+    `;
+}
+
+/**
+ * Generate customers print content
+ */
+function generateCustomersPrintContent(data) {
+    const tableRows = data.map(item => `
+        <tr>
+            <td>${item.cliente}</td>
+            <td class="number">${item.totalQuantity}</td>
+            <td class="number">${item.occurrences}</td>
+            <td class="number">${item.uniqueParts}</td>
+            <td class="number">${item.percentageOfTotal}%</td>
+        </tr>
+    `).join('');
+    
+    return `
+        <table>
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Qtd. Total</th>
+                    <th>Devoluções</th>
+                    <th>Peças Únicas</th>
+                    <th>% do Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${tableRows}
+            </tbody>
+        </table>
+    `;
+}
+
+/**
+ * Generate mechanics print content
+ */
+function generateMechanicsPrintContent(data) {
+    const tableRows = data.map(item => `
+        <tr>
+            <td>${item.mecanico}</td>
+            <td class="number">${item.totalQuantity}</td>
+            <td class="number">${item.occurrences}</td>
+            <td class="number">${item.uniqueParts}</td>
+            <td class="number">${item.percentageOfTotal}%</td>
+        </tr>
+    `).join('');
+    
+    return `
+        <table>
+            <thead>
+                <tr>
+                    <th>Mecânico</th>
+                    <th>Qtd. Total</th>
+                    <th>Devoluções</th>
+                    <th>Peças Únicas</th>
+                    <th>% do Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${tableRows}
+            </tbody>
+        </table>
+    `;
+}
+
+/**
+ * Generate actions print content
+ */
+function generateActionsPrintContent(data) {
+    const tableRows = data.map(item => `
+        <tr>
+            <td>${item.action}</td>
+            <td class="number">${item.totalQuantity}</td>
+            <td class="number">${item.occurrences}</td>
+            <td class="number">${item.percentageOfOccurrences}%</td>
+            <td class="number">${item.averageQuantityPerOccurrence}</td>
+        </tr>
+    `).join('');
+    
+    return `
+        <table>
+            <thead>
+                <tr>
+                    <th>Ação</th>
+                    <th>Qtd. Total</th>
+                    <th>Ocorrências</th>
+                    <th>% das Ocorrências</th>
+                    <th>Média/Ocorrência</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${tableRows}
+            </tbody>
+        </table>
+    `;
+}
+
+/**
+ * Generate monthly print content
+ */
+function generateMonthlyPrintContent(data) {
+    const tableRows = data.map(item => `
+        <tr>
+            <td>${item.month}</td>
+            <td class="number">${item.count}</td>
+            <td class="number">${item.quantity}</td>
+            <td class="number">${item.uniqueParts}</td>
+            <td class="number">${item.uniqueCustomers}</td>
+        </tr>
+    `).join('');
+    
+    return `
+        <table>
+            <thead>
+                <tr>
+                    <th>Mês</th>
+                    <th>Devoluções</th>
+                    <th>Qtd. Total</th>
+                    <th>Peças Únicas</th>
+                    <th>Clientes Únicos</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${tableRows}
+            </tbody>
+        </table>
+    `;
+}
+
+/**
+ * Generate detailed print content
+ */
+function generateDetailedPrintContent(data) {
+    const tableRows = data.map(item => `
+        <tr>
+            <td>${formatDate(item.data_devolucao)}</td>
+            <td>${item.codigo_peca}</td>
+            <td>${item.descricao_peca}</td>
+            <td class="number">${item.quantidade_devolvida}</td>
+            <td>${item.cliente}</td>
+            <td>${item.mecanico}</td>
+            <td>${item.acao_requisicao}</td>
+            <td>${item.requisicao_venda}</td>
+        </tr>
+    `).join('');
+    
+    return `
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Código</th>
+                    <th>Descrição</th>
+                    <th>Qtd.</th>
+                    <th>Cliente</th>
+                    <th>Mecânico</th>
+                    <th>Ação</th>
+                    <th>Req. Venda</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${tableRows}
+            </tbody>
+        </table>
+    `;
+}
+
+/**
+ * Show print preview in modal
+ * @param {string} reportType - Type of report
+ * @param {Array|Object} reportData - Report data
+ * @param {Object} options - Print options
+ */
+function showPrintPreview(reportType, reportData, options = {}) {
+    const html = generatePrintHTML(reportType, reportData, options);
+    
+    // Create modal for preview
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.id = 'printPreviewModal';
+    modal.innerHTML = `
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Visualização de Impressão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <iframe id="printPreviewFrame" style="width: 100%; height: 600px; border: none;"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" onclick="printFromPreview()">
+                        <i class="fas fa-print me-1"></i>Imprimir
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    const modalInstance = new bootstrap.Modal(modal);
+    modalInstance.show();
+    
+    // Load content into iframe
+    const iframe = document.getElementById('printPreviewFrame');
+    iframe.onload = function() {
+        iframe.contentDocument.open();
+        iframe.contentDocument.write(html);
+        iframe.contentDocument.close();
+    };
+    
+    // Store HTML for printing
+    window.currentPrintHTML = html;
+    
+    // Clean up on modal close
+    modal.addEventListener('hidden.bs.modal', function() {
+        modal.remove();
+        delete window.currentPrintHTML;
+    });
+}
+
+/**
+ * Print from preview modal
+ */
+function printFromPreview() {
+    if (window.currentPrintHTML) {
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(window.currentPrintHTML);
+        printWindow.document.close();
+        
+        printWindow.onload = function() {
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+        };
+        
+        // Close preview modal
+        bootstrap.Modal.getInstance(document.getElementById('printPreviewModal')).hide();
+    }
+}
+
 // Export functions for global use
 window.generateReports = generateReports;
 window.generateSummaryReport = generateSummaryReport;
@@ -618,4 +1116,7 @@ window.downloadCSV = downloadCSV;
 window.formatNumber = formatNumber;
 window.calculatePercentageChange = calculatePercentageChange;
 window.generateDashboardSummary = generateDashboardSummary;
+window.printReport = printReport;
+window.showPrintPreview = showPrintPreview;
+window.printFromPreview = printFromPreview;
 

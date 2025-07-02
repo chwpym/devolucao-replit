@@ -487,8 +487,146 @@ async function getDatabaseStats() {
 
 // Export functions for use in other modules
 window.initDatabase = initDatabase;
+/**
+ * Add a new devolution with multiple parts
+ * @param {Object} devolutionData - The devolution data with parts array
+ * @returns {Promise<number>} The ID of the newly created record
+ */
+async function addDevolutionWithParts(devolutionData) {
+    try {
+        const db = await getDatabase();
+
+        // Validate required fields
+        if (!devolutionData.cliente || devolutionData.cliente.trim() === '') {
+            throw new Error('Cliente é obrigatório');
+        }
+
+        if (!devolutionData.requisicao_venda || devolutionData.requisicao_venda.trim() === '') {
+            throw new Error('Número da requisição de venda é obrigatório');
+        }
+
+        if (!devolutionData.data_devolucao) {
+            throw new Error('Data da devolução é obrigatória');
+        }
+
+        if (!devolutionData.parts || !Array.isArray(devolutionData.parts) || devolutionData.parts.length === 0) {
+            throw new Error('Pelo menos uma peça deve ser informada');
+        }
+
+        // Validate each part
+        devolutionData.parts.forEach((part, index) => {
+            if (!part.codigo_peca || part.codigo_peca.trim() === '') {
+                throw new Error(`Código da peça ${index + 1} é obrigatório`);
+            }
+            if (!part.descricao_peca || part.descricao_peca.trim() === '') {
+                throw new Error(`Descrição da peça ${index + 1} é obrigatória`);
+            }
+            if (!part.quantidade_devolvida || part.quantidade_devolvida < 1) {
+                throw new Error(`Quantidade da peça ${index + 1} deve ser maior que zero`);
+            }
+            if (!part.tipo_acao || part.tipo_acao.trim() === '') {
+                throw new Error(`Tipo de ação da peça ${index + 1} é obrigatório`);
+            }
+        });
+
+        // Validate dates
+        const returnDate = new Date(devolutionData.data_devolucao);
+        if (devolutionData.data_venda) {
+            const saleDate = new Date(devolutionData.data_venda);
+            if (returnDate < saleDate) {
+                throw new Error('Data da devolução não pode ser anterior à data da venda');
+            }
+        }
+
+        // For compatibility with existing system, create separate records for each part
+        // This maintains backward compatibility while supporting multiple parts
+        const devolutionIds = [];
+        
+        for (let i = 0; i < devolutionData.parts.length; i++) {
+            const part = devolutionData.parts[i];
+            
+            const dataToStore = {
+                codigo_peca: part.codigo_peca.toString().trim(),
+                descricao_peca: part.descricao_peca.toString().trim(),
+                quantidade_devolvida: parseInt(part.quantidade_devolvida),
+                cliente: devolutionData.cliente.toString().trim(),
+                mecanico: devolutionData.mecanico ? devolutionData.mecanico.toString().trim() : devolutionData.cliente.toString().trim(),
+                requisicao_venda: devolutionData.requisicao_venda.toString().trim(),
+                acao_requisicao: part.tipo_acao, // Map tipo_acao to acao_requisicao for compatibility
+                data_venda: devolutionData.data_venda || null,
+                data_devolucao: devolutionData.data_devolucao,
+                observacao: part.observacoes_item || devolutionData.observacao || '',
+                // Add metadata to identify related parts
+                is_multi_part: true,
+                part_number: i + 1,
+                total_parts: devolutionData.parts.length,
+                multi_part_group: Date.now().toString(), // Unique identifier for this devolution group
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            };
+
+            const tx = db.transaction(STORE_NAME, 'readwrite');
+            const store = tx.objectStore(STORE_NAME);
+            const result = await store.add(dataToStore);
+            await tx.complete;
+            
+            devolutionIds.push(result);
+        }
+
+        console.log('Multi-part devolution added successfully with IDs:', devolutionIds);
+        return devolutionIds[0]; // Return the first ID as primary
+    } catch (error) {
+        console.error('Error adding multi-part devolution:', error);
+        throw new Error('Erro ao salvar devolução: ' + error.message);
+    }
+}
+
+/**
+ * Get grouped devolutions (for displaying multi-part devolutions together)
+ * @returns {Promise<Array>} Array of grouped devolution records
+ */
+async function getGroupedDevolutions() {
+    try {
+        const db = await getDatabase();
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const allDevolutions = await store.getAll();
+        await tx.complete;
+
+        // Group devolutions by multi_part_group
+        const grouped = {};
+        const singleDevolutions = [];
+
+        allDevolutions.forEach(dev => {
+            if (dev.is_multi_part && dev.multi_part_group) {
+                if (!grouped[dev.multi_part_group]) {
+                    grouped[dev.multi_part_group] = [];
+                }
+                grouped[dev.multi_part_group].push(dev);
+            } else {
+                singleDevolutions.push(dev);
+            }
+        });
+
+        // Sort grouped devolutions by part_number
+        Object.keys(grouped).forEach(groupId => {
+            grouped[groupId].sort((a, b) => (a.part_number || 0) - (b.part_number || 0));
+        });
+
+        return {
+            grouped: grouped,
+            single: singleDevolutions
+        };
+    } catch (error) {
+        console.error('Error getting grouped devolutions:', error);
+        throw new Error('Erro ao buscar devoluções agrupadas: ' + error.message);
+    }
+}
+
 window.getDatabase = getDatabase;
 window.addDevolution = addDevolution;
+window.addDevolutionWithParts = addDevolutionWithParts;
+window.getGroupedDevolutions = getGroupedDevolutions;
 window.getDevolution = getDevolution;
 window.getAllDevolutions = getAllDevolutions;
 window.updateDevolution = updateDevolution;

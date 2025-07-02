@@ -84,37 +84,77 @@
                         <div id="alertContainer"></div>
 
                         <form id="devolutionForm" novalidate>
+                            <!-- Parts Information Section -->
+                            <div class="card mb-4">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0"><i class="fas fa-cogs me-2"></i>Peças Devolvidas</h6>
+                                    <button type="button" class="btn btn-primary btn-sm" id="addPartBtn">
+                                        <i class="fas fa-plus me-1"></i>Adicionar Peça
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div id="partsContainer">
+                                        <!-- First part row (always present) -->
+                                        <div class="part-row border rounded p-3 mb-3" data-part-index="0">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="mb-0 text-primary">Peça #1</h6>
+                                                <button type="button" class="btn btn-outline-danger btn-sm remove-part-btn d-none">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4 mb-3">
+                                                    <label class="form-label">
+                                                        Código da Peça <span class="text-danger">*</span>
+                                                    </label>
+                                                    <input type="text" class="form-control codigo-peca" name="parts[0][codigo_peca]" required>
+                                                    <div class="invalid-feedback">
+                                                        Por favor, informe o código da peça.
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 mb-3">
+                                                    <label class="form-label">
+                                                        Quantidade <span class="text-danger">*</span>
+                                                    </label>
+                                                    <input type="number" class="form-control quantidade-devolvida" name="parts[0][quantidade_devolvida]" min="1" required>
+                                                    <div class="invalid-feedback">
+                                                        Informe uma quantidade válida.
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 mb-3">
+                                                    <label class="form-label">
+                                                        Ação <span class="text-danger">*</span>
+                                                    </label>
+                                                    <select class="form-select tipo-acao" name="parts[0][tipo_acao]" required>
+                                                        <option value="">Selecione...</option>
+                                                        <option value="Troca">Troca</option>
+                                                        <option value="Reembolso">Reembolso</option>
+                                                        <option value="Reparo">Reparo</option>
+                                                        <option value="Descarte">Descarte</option>
+                                                        <option value="Análise">Análise</option>
+                                                    </select>
+                                                    <div class="invalid-feedback">
+                                                        Por favor, selecione o tipo de ação.
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 mb-3">
+                                                    <label class="form-label">Descrição da Peça <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control descricao-peca" name="parts[0][descricao_peca]" required>
+                                                    <div class="invalid-feedback">
+                                                        Por favor, informe a descrição.
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 mb-3">
+                                                    <label class="form-label">Observações da Peça</label>
+                                                    <textarea class="form-control observacoes-item" name="parts[0][observacoes_item]" rows="2" placeholder="Observações específicas desta peça..."></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="row">
-                                <!-- Part Information -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="codigoPeca" class="form-label">
-                                        Código da Peça <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" id="codigoPeca" name="codigo_peca" required>
-                                    <div class="invalid-feedback">
-                                        Por favor, informe o código da peça.
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label for="quantidadeDevolvida" class="form-label">
-                                        Quantidade Devolvida <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="number" class="form-control" id="quantidadeDevolvida" name="quantidade_devolvida" min="1" required>
-                                    <div class="invalid-feedback">
-                                        Por favor, informe uma quantidade válida (maior que 0).
-                                    </div>
-                                </div>
-
-                                <div class="col-12 mb-3">
-                                    <label for="descricaoPeca" class="form-label">
-                                        Descrição da Peça <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" id="descricaoPeca" name="descricao_peca" required>
-                                    <div class="invalid-feedback">
-                                        Por favor, informe a descrição da peça.
-                                    </div>
-                                </div>
 
                                 <!-- Customer and Mechanic -->
                                 <div class="col-md-6 mb-3">
@@ -319,6 +359,9 @@
                 
                 // Initialize form validation
                 initFormValidation();
+                
+                // Initialize multiple parts functionality
+                initMultipleParts();
                 
                 // Check if editing mode
                 const urlParams = new URLSearchParams(window.location.search);
