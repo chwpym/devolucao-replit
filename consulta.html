@@ -285,6 +285,7 @@
     <script src="js/menu.js"></script>
     <script src="js/database.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/init.js"></script>
     <script>
         let currentResults = [];
         let deleteItemId = null;
@@ -298,7 +299,7 @@
                 await loadAllDevolutions();
                 
                 // Initialize backup reminder
-                initBackupReminder();
+                await safeInitBackupReminder();
             } catch (error) {
                 console.error('Error initializing search:', error);
                 showAlert('Erro ao inicializar busca: ' + error.message, 'danger');

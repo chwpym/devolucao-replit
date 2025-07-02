@@ -312,6 +312,7 @@
     <script src="js/database.js"></script>
     <script src="js/pessoas.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/init.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
             try {
@@ -346,7 +347,7 @@
                 document.getElementById('filterStatus').addEventListener('change', filterPeopleTable);
                 
                 // Initialize backup reminder
-                initBackupReminder();
+                await safeInitBackupReminder();
             } catch (error) {
                 console.error('Error initializing form:', error);
                 showAlert('Erro ao inicializar formulário: ' + error.message, 'danger');

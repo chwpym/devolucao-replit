@@ -262,6 +262,7 @@
     <script src="js/menu.js"></script>
     <script src="js/database.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/init.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
             try {
@@ -275,7 +276,7 @@
                 await loadRecentDevolutions();
                 
                 // Initialize backup reminder
-                initBackupReminder();
+                await safeInitBackupReminder();
             } catch (error) {
                 console.error('Error loading dashboard:', error);
                 showAlert('Erro ao carregar dashboard: ' + error.message, 'danger');

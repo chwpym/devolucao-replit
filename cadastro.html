@@ -701,6 +701,7 @@
         <script src="js/forms.js"></script>
         <script src="js/pessoas.js"></script>
         <script src="js/utils.js"></script>
+        <script src="js/init.js"></script>
         <script>
             document.addEventListener("DOMContentLoaded", async function () {
                 try {
@@ -721,7 +722,7 @@
                     initFormValidation();
 
                     // Initialize multiple parts functionality
-                    initMultipleParts();
+                    await safeInitMultipleParts();
 
                     // Check if editing mode
                     const urlParams = new URLSearchParams(
@@ -733,7 +734,7 @@
                     }
 
                     // Initialize backup reminder
-                    initBackupReminder();
+                    await safeInitBackupReminder();
                 } catch (error) {
                     console.error("Error initializing form:", error);
                     showAlert(
