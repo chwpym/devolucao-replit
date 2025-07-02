@@ -39,15 +39,20 @@ async function validateForm() {
     const form = document.getElementById('devolutionForm');
     let isValid = true;
 
-    // Get all form fields
+    // Clear previous validation messages
+    clearValidationMessages();
+
+    // Validate parts first
+    const partsValid = validateParts();
+    if (!partsValid) {
+        isValid = false;
+    }
+
+    // Get common form fields
     const fields = {
-        codigoPeca: document.getElementById('codigoPeca'),
-        descricaoPeca: document.getElementById('descricaoPeca'),
-        quantidadeDevolvida: document.getElementById('quantidadeDevolvida'),
         cliente: document.getElementById('cliente'),
         mecanico: document.getElementById('mecanico'),
         requisicaoVenda: document.getElementById('requisicaoVenda'),
-        acaoRequisicao: document.getElementById('acaoRequisicao'),
         dataVenda: document.getElementById('dataVenda'),
         dataDevolucao: document.getElementById('dataDevolucao')
     };
@@ -70,13 +75,6 @@ async function validateForm() {
 
         // Field-specific validations
         switch (fieldName) {
-            case 'quantidadeDevolvida':
-                if (value && (isNaN(value) || parseInt(value) <= 0)) {
-                    field.setCustomValidity('A quantidade deve ser um número maior que zero.');
-                    isValid = false;
-                }
-                break;
-
             case 'dataVenda':
             case 'dataDevolucao':
                 if (value && !isValidDate(value)) {
@@ -84,15 +82,6 @@ async function validateForm() {
                     isValid = false;
                 }
                 break;
-
-            case 'codigoPeca':
-                if (value && value.length < 2) {
-                    field.setCustomValidity('Código da peça deve ter pelo menos 2 caracteres.');
-                    isValid = false;
-                }
-                break;
-
-            case 'descricaoPeca':
                 if (value && value.length < 3) {
                     field.setCustomValidity('Descrição deve ter pelo menos 3 caracteres.');
                     isValid = false;
