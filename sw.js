@@ -1,14 +1,19 @@
 importScripts('/js/sync.js');
 
-const CACHE_NAME = 'controle-pecas-v1.0.0';
+const CACHE_NAME = 'controle-pecas-v2.0.0';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/cadastro.html',
-  '/cadastro-pessoas.html',
-  '/consulta.html',
-  '/relatorio.html',
-  '/backup.html',
+  '/pages/backup.html',
+  '/pages/cadastro-fornecedor.html',
+  '/pages/cadastro-garantia.html',
+  '/pages/cadastro-pessoas.html',
+  '/pages/cadastro.html',
+  '/pages/configuracoes.html',
+  '/pages/consulta-garantia.html',
+  '/pages/consulta.html',
+  '/pages/relatorio-garantia.html',
+  '/pages/relatorio.html',
   '/css/styles.css',
   '/js/database.js',
   '/js/pessoas.js',
@@ -17,11 +22,19 @@ const urlsToCache = [
   '/js/backup.js',
   '/js/utils.js',
   '/js/sync.js',
+  '/js/menu.js',
+  '/js/fornecedores.js',
+  '/js/garantias.js',
+  '/js/relatorios-garantia.js',
+  '/js/pdf-generator.js',
+  '/favicon.svg',
   '/manifest.json',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://cdn.jsdelivr.net/npm/idb@7/build/umd.js'
+  'https://cdn.jsdelivr.net/npm/idb@7/build/umd.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'
 ];
 
 // Install event - cache resources

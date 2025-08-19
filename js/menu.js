@@ -8,30 +8,30 @@ function populateMenu(activePage = '') {
     if (!nav) return;
 
     const menuItems = {
-        dashboard: { href: 'index.html', icon: 'fa-home', text: 'Dashboard' },
+        dashboard: { href: '/index.html', icon: 'fa-home', text: 'Dashboard' },
         cadastros: {
             text: 'Cadastros', icon: 'fa-plus-circle',
             dropdown: [
-                { href: 'cadastro.html', icon: 'fa-undo', text: 'Nova Devolução' },
-                { href: 'cadastro-pessoas.html', icon: 'fa-user', text: 'Clientes/Mecânicos' },
-                { href: 'cadastro-fornecedor.html', icon: 'fa-truck', text: 'Fornecedores' },
+                { href: '/pages/cadastro.html', icon: 'fa-undo', text: 'Nova Devolução' },
+                { href: '/pages/cadastro-pessoas.html', icon: 'fa-user', text: 'Clientes/Mecânicos' },
+                { href: '/pages/cadastro-fornecedor.html', icon: 'fa-truck', text: 'Fornecedores' },
             ]
         },
         garantias: {
             text: 'Garantias', icon: 'fa-shield-alt',
             dropdown: [
-                { href: 'cadastro-garantia.html', icon: 'fa-plus', text: 'Nova Garantia' },
-                { href: 'consulta-garantia.html', icon: 'fa-search', text: 'Consultar Garantias' },
+                { href: '/pages/cadastro-garantia.html', icon: 'fa-plus', text: 'Nova Garantia' },
+                { href: '/pages/consulta-garantia.html', icon: 'fa-search', text: 'Consultar Garantias' },
             ]
         },
-        relatorios: { href: 'relatorio.html', icon: 'fa-chart-bar', text: 'Relatórios' },
-        configuracoes: { href: 'configuracoes.html', icon: 'fa-cog', text: 'Configurações' },
-        backup: { href: 'backup.html', icon: 'fa-database', text: 'Backup' },
+        relatorios: { href: '/pages/relatorio.html', icon: 'fa-chart-bar', text: 'Relatórios' },
+        configuracoes: { href: '/pages/configuracoes.html', icon: 'fa-cog', text: 'Configurações' },
+        backup: { href: '/pages/backup.html', icon: 'fa-database', text: 'Backup' },
     };
 
     let menuHtml = `
         <div class="container">
-            <a class="navbar-brand" href="index.html">
+            <a class="navbar-brand" href="/index.html">
                 <i class="fas fa-tools me-2"></i>
                 Sistema de Controle
             </a>
