@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Garantia - Sistema de Controle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <!-- Navigation (to be populated by menu.js) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary"></nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="page-header mb-4">
+            <h1 class="display-5">Registrar Nova Garantia</h1>
+            <p class="text-muted">Preencha os dados para iniciar um processo de garantia.</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i> Formulário de Garantia</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="alertContainer"></div>
+                        <form id="warrantyForm" novalidate>
+                            <!-- Product Info -->
+                            <h6 class="text-primary">Informações do Produto</h6>
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label for="productId" class="form-label">Código do Produto</label>
+                                    <input type="text" class="form-control" id="productId" required>
+                                </div>
+                                <div class="col-md-5 mb-3">
+                                    <label for="productDesc" class="form-label">Descrição do Produto</label>
+                                    <input type="text" class="form-control" id="productDesc" required>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label for="quantity" class="form-label">Quantidade</label>
+                                    <input type="number" class="form-control" id="quantity" value="1" min="1" required>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <label for="value" class="form-label">Valor (R$)</label>
+                                    <input type="number" class="form-control" id="value" step="0.01" placeholder="100,00">
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label for="defect" class="form-label">Defeito Apresentado</label>
+                                    <textarea class="form-control" id="defect" rows="2" required></textarea>
+                                </div>
+                            </div>
+                            <hr>
+                            <!-- Document Info -->
+                            <h6 class="text-primary mt-4">Informações da Documentação</h6>
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label for="purchaseInvoice" class="form-label">NF de Compra</label>
+                                    <input type="text" class="form-control" id="purchaseInvoice">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="salesRequestId" class="form-label">Req. de Venda</label>
+                                    <input type="text" class="form-control" id="salesRequestId">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="warrantyRequestId" class="form-label">Req. de Garantia</label>
+                                    <input type="text" class="form-control" id="warrantyRequestId">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="returnInvoice" class="form-label">Nota de Retorno</label>
+                                    <input type="text" class="form-control" id="returnInvoice">
+                                </div>
+                            </div>
+                             <hr>
+                            <!-- People/Entities Info -->
+                             <h6 class="text-primary mt-4">Envolvidos</h6>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="supplierId" class="form-label">Fornecedor</label>
+                                    <select class="form-select" id="supplierId" required></select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="clientId" class="form-label">Cliente</label>
+                                    <select class="form-select" id="clientId" required></select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="mechanicId" class="form-label">Mecânico</label>
+                                    <select class="form-select" id="mechanicId"></select>
+                                </div>
+                            </div>
+                            <hr>
+                            <!-- Status and Dates -->
+                            <h6 class="text-primary mt-4">Status e Prazos</h6>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="status" class="form-label">Status da Garantia</label>
+                                    <select class="form-select" id="status" required>
+                                        <option value="Em análise" selected>Em análise</option>
+                                        <option value="Aprovada">Aprovada</option>
+                                        <option value="Rejeitada">Rejeitada</option>
+                                        <option value="Aguardando peça">Aguardando peça</option>
+                                        <option value="Concluída">Concluída</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="purchaseDate" class="form-label">Data da Compra</label>
+                                    <input type="date" class="form-control" id="purchaseDate">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="warrantyDeadline" class="form-label">Prazo Final da Garantia</label>
+                                    <input type="date" class="form-control" id="warrantyDeadline">
+                                </div>
+                            </div>
+                            <hr>
+                             <!-- Attachments and Notes -->
+                            <h6 class="text-primary mt-4">Observações e Anexos</h6>
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label for="notes" class="form-label">Observações Adicionais</label>
+                                    <textarea class="form-control" id="notes" rows="3"></textarea>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label for="attachments" class="form-label">Anexos (Fotos, PDFs, etc.)</label>
+                                    <input type="file" class="form-control" id="attachments" multiple>
+                                    <div class="form-text">Você pode selecionar múltiplos arquivos.</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 mt-4">
+                                <button type="button" class="btn btn-secondary">Limpar</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i>Salvar Garantia
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light mt-5 py-4">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-center text-muted">
+                    <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
+                </div>
+                <div id="syncStatus" class="text-muted small"></div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/sync.js"></script>
+    <script src="js/garantias.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.populateMenu) {
+                window.populateMenu('cadastro-garantia');
+            }
+            // Logic for this page will be in js/garantias.js
+        });
+    </script>
+</body>
+</html>

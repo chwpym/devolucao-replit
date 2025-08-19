@@ -14,7 +14,10 @@
     "@neondatabase/serverless": "^1.0.1",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.2",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
+    "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
