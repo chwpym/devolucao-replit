@@ -11,54 +11,7 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="fas fa-tools me-2"></i>
-                Sistema de Controle de Retorno de Peças
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">
-                            <i class="fas fa-home me-1"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="cadastroDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-plus-circle me-1"></i>Cadastrar
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="cadastro.html">
-                                <i class="fas fa-undo me-2"></i>Devolução
-                            </a></li>
-                            <li><a class="dropdown-item" href="cadastro-pessoas.html">
-                                <i class="fas fa-user me-2"></i>Cliente/Mecânico
-                            </a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="consulta.html">
-                            <i class="fas fa-search me-1"></i>Consultar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="relatorio.html">
-                            <i class="fas fa-chart-bar me-1"></i>Relatórios
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="backup.html">
-                            <i class="fas fa-download me-1"></i>Backup
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary"></nav>
 
     <!-- Main Content -->
     <div class="container mt-4">
@@ -344,6 +297,9 @@
         let currentReportData = null;
 
         document.addEventListener('DOMContentLoaded', async function() {
+            if (window.populateMenu) {
+                window.populateMenu('relatorios');
+            }
             try {
                 // Initialize database
                 await initDatabase();

@@ -752,7 +752,7 @@ function goToBackupPage() {
     if (modal) {
         bootstrap.Modal.getInstance(modal).hide();
     }
-    window.location.href = 'backup.html';
+    window.location.href = '/pages/backup.html';
 }
 
 // Make functions available globally

@@ -11,54 +11,7 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="fas fa-tools me-2"></i>
-                Sistema de Controle de Retorno de Peças
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">
-                            <i class="fas fa-home me-1"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="cadastroDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-plus-circle me-1"></i>Cadastrar
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="cadastro.html">
-                                <i class="fas fa-undo me-2"></i>Devolução
-                            </a></li>
-                            <li><a class="dropdown-item" href="cadastro-pessoas.html">
-                                <i class="fas fa-user me-2"></i>Cliente/Mecânico
-                            </a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="consulta.html">
-                            <i class="fas fa-search me-1"></i>Consultar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="relatorio.html">
-                            <i class="fas fa-chart-bar me-1"></i>Relatórios
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="backup.html">
-                            <i class="fas fa-download me-1"></i>Backup
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary"></nav>
 
     <!-- Main Content -->
     <div class="container mt-4">
@@ -135,6 +88,9 @@
                                 </button>
                                 <button type="button" class="btn btn-secondary" onclick="clearFilters()">
                                     <i class="fas fa-times me-1"></i>Limpar Filtros
+                                </button>
+                                <button type="button" class="btn btn-info" onclick="exportDevolutionsToPDF()">
+                                    <i class="fas fa-file-pdf me-1"></i>Exportar PDF
                                 </button>
                                 <button type="button" class="btn btn-success ms-auto" onclick="exportToCSV()">
                                     <i class="fas fa-download me-1"></i>Exportar CSV
@@ -290,12 +246,18 @@
     <script src="js/database.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/sync.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="js/pdf-generator.js"></script>
     <script src="js/init.js"></script>
     <script>
         let currentResults = [];
         let deleteItemId = null;
 
         document.addEventListener('DOMContentLoaded', async function() {
+            if (window.populateMenu) {
+                window.populateMenu('cadastros'); // Assuming this falls under 'cadastros'
+            }
             try {
                 // Initialize database
                 await initDatabase();
@@ -518,6 +480,26 @@
             }
         });
 
+        function exportDevolutionsToPDF() {
+            if (currentResults.length === 0) {
+                showAlert('Nenhum dado para exportar', 'warning');
+                return;
+            }
+            const headers = ['Código', 'Descrição', 'Qtd', 'Cliente', 'Mecânico', 'Req. Venda', 'Ação', 'Data Venda', 'Data Devolução'];
+            const data = currentResults.map(item => [
+                item.codigo_peca,
+                item.descricao_peca,
+                item.quantidade_devolvida,
+                item.cliente,
+                item.mecanico,
+                item.requisicao_venda,
+                item.acao_requisicao,
+                formatDate(item.data_venda),
+                formatDate(item.data_devolucao)
+            ]);
+            generateReportPDF(data, headers, 'Relatório de Devoluções');
+        }
+
         function exportToCSV() {
             if (currentResults.length === 0) {
                 showAlert('Nenhum dado para exportar', 'warning');
@@ -568,7 +550,7 @@
 
         function editDevolution(id) {
             // Redirect to cadastro page with edit parameter
-            window.location.href = `cadastro.html?edit=${id}`;
+            window.location.href = `/pages/cadastro.html?edit=${id}`;
         }
 
         function showAlert(message, type) {

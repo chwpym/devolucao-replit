@@ -4,7 +4,7 @@
  */
 
 const DB_NAME = 'dbRetornos';
-const DB_VERSION = 3;
+const DB_VERSION = 5;
 const STORE_NAME = 'devolucoes';
 
 let dbInstance = null;
@@ -50,6 +50,35 @@ async function initDatabase() {
                     if (!peopleStore.indexNames.contains('updated_at')) {
                         peopleStore.createIndex('updated_at', 'updated_at');
                         console.log('updated_at index added to people store.');
+                    }
+                }
+
+                // Company settings store
+                if (oldVersion < 4) {
+                    if (!db.objectStoreNames.contains('configuracoes')) {
+                        db.createObjectStore('configuracoes', { keyPath: 'id' });
+                        console.log('Configuracoes store created.');
+                    }
+                }
+                if (oldVersion < 5) {
+                    if (!db.objectStoreNames.contains('fornecedores')) {
+                        const store = db.createObjectStore('fornecedores', { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('uuid', 'uuid', { unique: true });
+                        store.createIndex('name', 'name');
+                        store.createIndex('updated_at', 'updated_at');
+                        console.log('Fornecedores store created.');
+                    }
+                    if (!db.objectStoreNames.contains('garantias')) {
+                        const store = db.createObjectStore('garantias', { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('uuid', 'uuid', { unique: true });
+                        store.createIndex('status', 'status');
+                        store.createIndex('updated_at', 'updated_at');
+                        console.log('Garantias store created.');
+                    }
+                    if (!db.objectStoreNames.contains('garantia_anexos')) {
+                        const store = db.createObjectStore('garantia_anexos', { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('warrantyId', 'warrantyId');
+                        console.log('Garantia Anexos store created.');
                     }
                 }
             }

@@ -2,8 +2,8 @@
 
 :root {
     /* Unified color scheme based on README.md */
-    --bs-primary: #667eea;
-    --bs-primary-rgb: 102, 126, 234;
+    --bs-primary: #0066FF;
+    --bs-primary-rgb: 0, 102, 255;
 
     /* Color scheme using HSL format */
     --secondary-color: 210 11% 71%; /* #A6B3C0 */
