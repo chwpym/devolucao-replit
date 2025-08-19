@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { db } from '../server/db';
 import * as schema from '../shared/schema';
-import { eq, or, and, gt } from 'drizzle-orm';
+import { eq, or, and, gt, sql } from 'drizzle-orm';
 
 const app = express();
 app.use(express.json());
@@ -12,24 +12,45 @@ app.post('/api/sync', async (req: Request, res: Response) => {
     const lastSyncTimestamp = req.query.lastSyncTimestamp as string;
 
     try {
-        // --- Step 1: Client to Server Synchronization ---
-        // The client sends its updated/created data to the server.
-
-        // Sync People
+        // --- Step 1: Client to Server Synchronization (Upsert) ---
         if (people && people.length > 0) {
-            // In a real scenario, you'd perform an "upsert" (insert or update).
-            // Drizzle has `onConflictDoUpdate` for this.
-            await db.insert(schema.people).values(people).onConflictDoNothing(); // Simplified for now
+            await db.insert(schema.people)
+                .values(people)
+                .onConflictDoUpdate({
+                    target: schema.people.uuid,
+                    set: {
+                        nome: sql`excluded.nome`,
+                        email: sql`excluded.email`,
+                        telefone: sql`excluded.telefone`,
+                        endereco: sql`excluded.endereco`,
+                        tipo: sql`excluded.tipo`,
+                        status: sql`excluded.status`,
+                        observacoes: sql`excluded.observacoes`,
+                        updatedAt: new Date(),
+                    }
+                });
         }
 
-        // Sync Devolutions
         if (devolutions && devolutions.length > 0) {
-            // Similar to people, upsert would be ideal.
-            await db.insert(schema.devolutions).values(devolutions).onConflictDoNothing(); // Simplified for now
+            // This is more complex due to relations. For now, we'll handle the main table.
+            // A full implementation would handle devolution_items as well.
+            await db.insert(schema.devolutions)
+                .values(devolutions)
+                .onConflictDoUpdate({
+                    target: schema.devolutions.uuid,
+                    set: {
+                        cliente_id: sql`excluded.cliente_id`,
+                        mecanico_id: sql`excluded.mecanico_id`,
+                        numero_pedido: sql`excluded.numero_pedido`,
+                        data_venda: sql`excluded.data_venda`,
+                        data_devolucao: sql`excluded.data_devolucao`,
+                        observacoes: sql`excluded.observacoes`,
+                        updatedAt: new Date(),
+                    }
+                });
         }
 
         // --- Step 2: Server to Client Synchronization ---
-        // The server sends back any data that has been updated since the client's last sync.
         let serverUpdates = {
             people: [],
             devolutions: []

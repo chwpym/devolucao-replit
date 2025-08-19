@@ -4,7 +4,7 @@
  */
 
 const DB_NAME = 'dbRetornos';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE_NAME = 'devolucoes';
 
 let dbInstance = null;
@@ -21,45 +21,37 @@ async function initDatabase() {
         dbInstance = await idb.openDB(DB_NAME, DB_VERSION, {
             upgrade(db, oldVersion, newVersion, transaction) {
                 console.log(`Database upgrade from version ${oldVersion} to ${newVersion}`);
-                
-                // Create the main store for devolutions if it doesn't exist
+
+                // Devolutions store
                 if (!db.objectStoreNames.contains(STORE_NAME)) {
-                    const store = db.createObjectStore(STORE_NAME, {
-                        keyPath: 'id',
-                        autoIncrement: true
-                    });
-
-                    // Create indices for fast searching
-                    store.createIndex('codigo_peca', 'codigo_peca', { unique: false });
-                    store.createIndex('cliente', 'cliente', { unique: false });
-                    store.createIndex('mecanico', 'mecanico', { unique: false });
-                    store.createIndex('requisicao_venda', 'requisicao_venda', { unique: false });
-                    store.createIndex('acao_requisicao', 'acao_requisicao', { unique: false });
-                    store.createIndex('data_venda', 'data_venda', { unique: false });
-                    store.createIndex('data_devolucao', 'data_devolucao', { unique: false });
-                    store.createIndex('descricao_peca', 'descricao_peca', { unique: false });
-
-                    console.log('Devolutions store created with indices');
+                    const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                    store.createIndex('codigo_peca', 'codigo_peca');
+                    store.createIndex('cliente', 'cliente');
+                    store.createIndex('data_devolucao', 'data_devolucao');
+                    console.log('Devolutions store created.');
+                }
+                if (oldVersion < 3) {
+                    const store = transaction.objectStore(STORE_NAME);
+                    if (!store.indexNames.contains('updated_at')) {
+                        store.createIndex('updated_at', 'updated_at');
+                        console.log('updated_at index added to devolutions store.');
+                    }
                 }
 
-                // Create people store if it doesn't exist (version 2+)
-                if (newVersion >= 2 && !db.objectStoreNames.contains('pessoas')) {
-                    const peopleStore = db.createObjectStore('pessoas', {
-                        keyPath: 'id',
-                        autoIncrement: true
-                    });
-
-                    // Create indices for people store
+                // People store
+                if (!db.objectStoreNames.contains('pessoas')) {
+                    const peopleStore = db.createObjectStore('pessoas', { keyPath: 'id', autoIncrement: true });
                     peopleStore.createIndex('codigo', 'codigo', { unique: true });
-                    peopleStore.createIndex('nome', 'nome', { unique: false });
-                    peopleStore.createIndex('tipo', 'tipo', { unique: false });
-                    peopleStore.createIndex('status', 'status', { unique: false });
-                    peopleStore.createIndex('documento', 'documento', { unique: false });
-                    
-                    console.log('People store created with indices');
+                    peopleStore.createIndex('nome', 'nome');
+                    console.log('People store created.');
                 }
-
-                console.log('Database initialized with proper schema and indices');
+                if (oldVersion < 3) {
+                    const peopleStore = transaction.objectStore('pessoas');
+                    if (!peopleStore.indexNames.contains('updated_at')) {
+                        peopleStore.createIndex('updated_at', 'updated_at');
+                        console.log('updated_at index added to people store.');
+                    }
+                }
             }
         });
 
@@ -129,6 +121,7 @@ async function addDevolution(devolutionData) {
 
         // Prepare data for storage
         const dataToStore = {
+            uuid: devolutionData.uuid || generateUUID(),
             codigo_peca: devolutionData.codigo_peca.toString().trim(),
             descricao_peca: devolutionData.descricao_peca.toString().trim(),
             quantidade_devolvida: quantity,
@@ -546,6 +539,7 @@ async function addDevolutionWithParts(devolutionData) {
             const part = devolutionData.parts[i];
             
             const dataToStore = {
+                uuid: part.uuid || generateUUID(),
                 codigo_peca: part.codigo_peca.toString().trim(),
                 descricao_peca: part.descricao_peca.toString().trim(),
                 quantidade_devolvida: parseInt(part.quantidade_devolvida),

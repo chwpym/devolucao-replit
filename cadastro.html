@@ -13,6 +13,7 @@
             rel="stylesheet"
         />
         <link href="css/styles.css" rel="stylesheet" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     </head>
     <body>
         <!-- Navigation -->
@@ -525,10 +526,13 @@
         <!-- Footer -->
         <footer class="bg-light mt-5 py-4">
             <div class="container">
-                <div class="text-center text-muted">
-                    <p class="mb-0">
-                        Sistema de Controle de Retorno de Peças &copy; 2024
-                    </p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-center text-muted">
+                        <p class="mb-0">
+                            Sistema de Controle de Retorno de Peças &copy; 2024
+                        </p>
+                    </div>
+                    <div id="syncStatus" class="text-muted small"></div>
                 </div>
             </div>
         </footer>
@@ -701,6 +705,7 @@
         <script src="js/forms.js"></script>
         <script src="js/pessoas.js"></script>
         <script src="js/utils.js"></script>
+        <script src="js/sync.js"></script>
         <script src="js/init.js"></script>
         <script>
             document.addEventListener("DOMContentLoaded", async function () {

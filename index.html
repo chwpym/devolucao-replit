@@ -14,7 +14,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Controle Peças">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiM2NjdFRUEiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0yMi43IDEzLjJMMjIgMTMuN0wyMCAyLjhDMjAgMS43IDE5LjMgMSAxOC4yIDFIOS44Qzg3IDEgOCAxLjcgOCAyLjhWMy41SDE4VjEySDE2VjE0SDE4VjE5VjIxVjIySDZWMjFWMTlWOEg0VjE5SDJWOUMxLjUgOS4xIDEgOS42IDEgMTAuMlYxOC4yQzEgMTkuMyAxLjcgMjAgMi44IDIwSDQuMlYyMS4yQzQuMiAyMi4zIDQuOSAyMyA2IDIzSDE5QzIwLjEgMjMgMjAuOCAyMi4zIDIwLjggMjEuMlYyMC44QzIxIDIwLjcgMjEuMiAyMC42IDIxLjMgMjAuNUwyMS44IDIwLjFMMjIuNyAxOVMxNC4yIDEzLjYgMTMuNyAxMy4yWk01IDE4SDE3VjE2SDVWMThaTTUgMTNIMTdWMTFINVYxM1oiLz4KPHN2Zz4KPC9zdmc+">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body>
     <!-- Navigation -->
@@ -251,8 +251,11 @@
     <!-- Footer -->
     <footer class="bg-light mt-5 py-4">
         <div class="container">
-            <div class="text-center text-muted">
-                <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-center text-muted">
+                    <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
+                </div>
+                <div id="syncStatus" class="text-muted small"></div>
             </div>
         </div>
     </footer>
@@ -262,6 +265,7 @@
     <script src="js/menu.js"></script>
     <script src="js/database.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/sync.js"></script>
     <script src="js/init.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
