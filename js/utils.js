@@ -608,6 +608,23 @@ window.setQueryParam = setQueryParam;
 window.storage = storage;
 
 /**
+ * Generate a v4 UUID
+ * @returns {string} UUID
+ */
+function generateUUID() {
+    if (crypto && crypto.randomUUID) {
+        return crypto.randomUUID();
+    }
+    // Fallback for older browsers or non-secure contexts
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+window.generateUUID = generateUUID;
+
+/**
  * Initialize backup reminder popup
  */
 function initBackupReminder() {

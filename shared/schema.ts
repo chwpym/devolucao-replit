@@ -4,6 +4,7 @@ import { relations } from 'drizzle-orm';
 // People table
 export const people = pgTable('people', {
   id: serial('id').primaryKey(),
+  uuid: varchar('uuid', { length: 36 }).notNull().unique(),
   codigo: varchar('codigo', { length: 20 }).notNull().unique(),
   nome: varchar('nome', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }),
@@ -19,6 +20,7 @@ export const people = pgTable('people', {
 // Devolutions table (header)
 export const devolutions = pgTable('devolutions', {
   id: serial('id').primaryKey(),
+  uuid: varchar('uuid', { length: 36 }).notNull().unique(),
   cliente_id: integer('cliente_id').references(() => people.id),
   mecanico_id: integer('mecanico_id').references(() => people.id),
   numero_pedido: varchar('numero_pedido', { length: 100 }),
@@ -32,6 +34,7 @@ export const devolutions = pgTable('devolutions', {
 // Devolution items table (details)
 export const devolutionItems = pgTable('devolution_items', {
   id: serial('id').primaryKey(),
+  uuid: varchar('uuid', { length: 36 }).notNull().unique(),
   devolution_id: integer('devolution_id').references(() => devolutions.id).notNull(),
   codigo_peca: varchar('codigo_peca', { length: 100 }).notNull(),
   descricao_peca: text('descricao_peca').notNull(),
