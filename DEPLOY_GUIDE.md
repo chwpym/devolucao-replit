@@ -74,6 +74,6 @@ Após a primeira implantação, o banco de dados estará vazio. Você precisa ex
         ```bash
         npm run db:push
         ```
-    *   Este comando usará o `drizzle-kit` para ler o seu schema em `shared/schema.ts` e criar as tabelas correspondentes no seu banco de dados Neon.
+    *   Este comando usará o `drizzle-kit` para ler o seu schema em `shared/schema.ts` e criar as tabelas correspondentes no seu banco de dados Neon. As tabelas criadas incluem: `people`, `devolutions`, `empresa`, `fornecedores`, e `garantias`.
 
-Após esses passos, sua aplicação estará implantada na Vercel e conectada ao banco de dados Neon, com o schema devidamente configurado. A API de sincronização em `/api/sync` estará pronta para receber requisições.
+Após esses passos, sua aplicação estará implantada na Vercel e conectada ao banco de dados Neon, com o schema devidamente configurado. As APIs de sincronização (ex: `/api/sync`, `/api/garantias`) estarão prontas para receber requisições.
