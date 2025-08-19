@@ -1,9 +1,11 @@
 /* Custom CSS for Parts Return Control System */
 
 :root {
+    /* Unified color scheme based on README.md */
+    --bs-primary: #667eea;
+    --bs-primary-rgb: 102, 126, 234;
+
     /* Color scheme using HSL format */
-    --primary-color: 210 100% 50%; /* #0066FF */
-    --primary-dark: 210 100% 40%; /* #0052CC */
     --secondary-color: 210 11% 71%; /* #A6B3C0 */
     --background: 210 11% 98%; /* #F5F7FA */
     --surface: 0 0% 100%; /* #FFFFFF */
@@ -36,8 +38,8 @@ body {
 
 .form-control:focus,
 .form-select:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
 }
 
 /* Improved spacing for form groups */
@@ -57,7 +59,7 @@ body {
 }
 
 .btn-link:hover {
-    color: #0d6efd !important;
+    color: var(--bs-primary) !important;
 }
 
 /* Sort icons */
@@ -178,8 +180,8 @@ textarea.form-control {
 
 .form-control:focus,
 .form-select:focus {
-    border-color: hsl(var(--primary-color));
-    box-shadow: 0 0 0 0.2rem hsla(var(--primary-color), 0.25);
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
 }
 
 .form-control:invalid,
@@ -203,27 +205,7 @@ textarea.form-control {
     border: none;
 }
 
-.btn-primary {
-    background-color: hsl(var(--primary-color));
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: hsl(var(--primary-dark));
-    transform: translateY(-1px);
-}
-
-.btn-outline-primary {
-    border: 2px solid hsl(var(--primary-color));
-    color: hsl(var(--primary-color));
-    background-color: transparent;
-}
-
-.btn-outline-primary:hover {
-    background-color: hsl(var(--primary-color));
-    color: white;
-    transform: translateY(-1px);
-}
+/* Note: .btn-primary and .btn-outline-primary will now use the Bootstrap variables */
 
 .btn-success {
     background-color: hsl(var(--success));
@@ -286,11 +268,12 @@ textarea.form-control {
     left: -300px;
     width: 300px;
     height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: hsl(var(--background)); /* Changed to body background color */
     z-index: 1050;
     transition: left 0.3s ease;
     overflow-y: auto;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    border-right: 1px solid hsl(var(--border-color));
+    box-shadow: 2px 0 10px rgba(0,0,0,0.05);
 }
 
 .sidebar.show {
@@ -298,16 +281,25 @@ textarea.form-control {
 }
 
 .sidebar .sidebar-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    background: rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid hsl(var(--border-color));
 }
 
 .sidebar .sidebar-header h4 {
-    color: white;
+    color: hsl(var(--text-primary)); /* Changed to dark text */
     margin: 0;
     font-size: 1.3rem;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .sidebar-header h4 i {
+    margin-right: 0.75rem;
+    font-size: 1.2rem;
 }
 
 .sidebar .sidebar-menu {
@@ -315,12 +307,12 @@ textarea.form-control {
 }
 
 .sidebar .sidebar-menu .nav-link {
-    color: white;
+    color: hsl(var(--text-secondary)); /* Changed to secondary dark text */
     padding: 1rem 1.5rem;
     border: none;
     border-radius: 0;
     font-weight: 500;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     text-decoration: none;
@@ -328,14 +320,15 @@ textarea.form-control {
 }
 
 .sidebar .sidebar-menu .nav-link:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: #ffd700;
-    transform: translateX(5px);
+    background-color: hsl(210, 11%, 95%); /* Lighter gray for hover */
+    color: var(--bs-primary);
+    transform: translateX(3px);
 }
 
 .sidebar .sidebar-menu .nav-link.active {
-    background-color: rgba(255,255,255,0.2);
-    color: #ffd700;
+    background-color: hsla(var(--bs-primary-rgb), 0.1);
+    color: var(--bs-primary);
+    font-weight: 600;
 }
 
 .sidebar .sidebar-menu .nav-link i {
@@ -378,7 +371,7 @@ textarea.form-control {
     right: 1rem;
     background: none;
     border: none;
-    color: white;
+    color: hsl(var(--text-secondary)); /* Changed to dark text */
     font-size: 1.5rem;
     padding: 0.5rem;
 }
@@ -411,10 +404,7 @@ textarea.form-control {
     font-size: 0.875rem;
 }
 
-.badge.bg-primary {
-    background-color: hsl(var(--primary-color)) !important;
-    color: white;
-}
+/* .badge.bg-primary will now correctly use the overridden bootstrap variable */
 
 .badge.bg-success {
     background-color: hsl(var(--success)) !important;
@@ -573,7 +563,7 @@ footer {
 .btn:focus,
 .form-control:focus,
 .form-select:focus {
-    outline: 2px solid hsl(var(--primary-color));
+    outline: 2px solid var(--bs-primary);
     outline-offset: 2px;
 }
 

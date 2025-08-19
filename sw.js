@@ -1,3 +1,5 @@
+importScripts('/js/sync.js');
+
 const CACHE_NAME = 'controle-pecas-v1.0.0';
 const urlsToCache = [
   '/',
@@ -14,6 +16,7 @@ const urlsToCache = [
   '/js/reports.js',
   '/js/backup.js',
   '/js/utils.js',
+  '/js/sync.js',
   '/manifest.json',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js',
@@ -175,17 +178,9 @@ self.addEventListener('notificationclick', function(event) {
 async function doBackgroundSync() {
   try {
     console.log('Service Worker: Performing background sync');
-    
-    // Here you could implement data synchronization logic
-    // For example, sync pending devolutions or people data
-    
-    // For now, just log the sync attempt
-    console.log('Service Worker: Background sync completed');
-    
-    return Promise.resolve();
+    await self.triggerSync();
   } catch (error) {
     console.error('Service Worker: Background sync failed', error);
-    throw error;
   }
 }
 
