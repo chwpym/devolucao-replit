@@ -17,8 +17,8 @@ app.get('/api/devolucoes', async (req: Request, res: Response) => {
         const devolucoes = await db.select().from(schema.devolutions);
         res.status(200).json(devolucoes);
     } catch (error) {
-        console.error('Failed to get devolucoes:', error);
-        res.status(500).json({ error: 'Failed to get devolucoes.' });
+        console.error('API Error in /api/devolucoes:', error);
+        res.status(500).json({ error: 'Failed to get devolucoes.', details: error.message });
     }
 });
 
@@ -29,8 +29,8 @@ app.get('/api/fornecedores', async (req: Request, res: Response) => {
         const suppliers = await db.select().from(schema.fornecedores);
         res.status(200).json(suppliers);
     } catch (error) {
-        console.error('Failed to get suppliers:', error);
-        res.status(500).json({ error: 'Failed to get suppliers.' });
+        console.error('API Error in /api/fornecedores (GET):', error);
+        res.status(500).json({ error: 'Failed to get suppliers.', details: error.message });
     }
 });
 
@@ -54,8 +54,8 @@ app.post('/api/fornecedores', async (req: Request, res: Response) => {
             .returning();
         res.status(201).json(result[0]);
     } catch (error) {
-        console.error('Failed to save supplier:', error);
-        res.status(500).json({ error: 'Failed to save supplier.' });
+        console.error('API Error in /api/fornecedores (POST):', error);
+        res.status(500).json({ error: 'Failed to save supplier.', details: error.message });
     }
 });
 
@@ -65,8 +65,8 @@ app.get('/api/garantias', async (req: Request, res: Response) => {
         const warranties = await db.select().from(schema.garantias);
         res.status(200).json(warranties);
     } catch (error) {
-        console.error('Failed to get warranties:', error);
-        res.status(500).json({ error: 'Failed to get warranties.' });
+        console.error('API Error in /api/garantias (GET):', error);
+        res.status(500).json({ error: 'Failed to get warranties.', details: error.message });
     }
 });
 
@@ -101,8 +101,8 @@ app.post('/api/garantias', async (req: Request, res: Response) => {
             .returning();
         res.status(201).json(result[0]);
     } catch (error) {
-        console.error('Failed to save warranty:', error);
-        res.status(500).json({ error: 'Failed to save warranty.' });
+        console.error('API Error in /api/garantias (POST):', error);
+        res.status(500).json({ error: 'Failed to save warranty.', details: error.message });
     }
 });
 
@@ -116,8 +116,8 @@ app.get('/api/settings', async (req: Request, res: Response) => {
             res.status(404).json({ message: 'Settings not found.' });
         }
     } catch (error) {
-        console.error('Failed to get settings:', error);
-        res.status(500).json({ error: 'Failed to get settings.' });
+        console.error('API Error in /api/settings (GET):', error);
+        res.status(500).json({ error: 'Failed to get settings.', details: error.message });
     }
 });
 
@@ -149,8 +149,8 @@ app.post('/api/settings', async (req: Request, res: Response) => {
             });
         res.status(200).json({ message: 'Settings saved successfully.' });
     } catch (error) {
-        console.error('Failed to save settings:', error);
-        res.status(500).json({ error: 'Failed to save settings.' });
+        console.error('API Error in /api/settings (POST):', error);
+        res.status(500).json({ error: 'Failed to save settings.', details: error.message });
     }
 });
 
@@ -212,8 +212,8 @@ app.post('/api/sync', async (req: Request, res: Response) => {
         });
 
     } catch (error) {
-        console.error('Sync failed:', error);
-        res.status(500).json({ error: 'An error occurred during synchronization.' });
+        console.error('API Error in /api/sync:', error);
+        res.status(500).json({ error: 'An error occurred during synchronization.', details: error.message });
     }
 });
 
