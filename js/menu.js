@@ -5,7 +5,8 @@
 
 function populateMenu(activePage = '') {
     const nav = document.querySelector('nav.navbar');
-    if (!nav) return;
+    const sidebarMenu = document.querySelector('.sidebar-menu');
+    if (!nav || !sidebarMenu) return;
 
     const menuItems = {
         dashboard: { href: '/index.html', icon: 'fa-home', text: 'Dashboard' },
@@ -24,59 +25,48 @@ function populateMenu(activePage = '') {
                 { href: '/pages/consulta-garantia.html', icon: 'fa-search', text: 'Consultar Garantias' },
             ]
         },
+        consultas: {
+            text: 'Consultas', icon: 'fa-search',
+            dropdown: [
+                 { href: '/pages/consulta.html', icon: 'fa-undo', text: 'Consultar Devoluções' },
+                 { href: '/pages/consulta-garantia.html', icon: 'fa-shield-alt', text: 'Consultar Garantias' },
+            ]
+        },
         relatorios: { href: '/pages/relatorio.html', icon: 'fa-chart-bar', text: 'Relatórios' },
         configuracoes: { href: '/pages/configuracoes.html', icon: 'fa-cog', text: 'Configurações' },
         backup: { href: '/pages/backup.html', icon: 'fa-database', text: 'Backup' },
     };
 
-    let menuHtml = `
+    // --- Populate Top Navbar ---
+    let topMenuHtml = `
         <div class="container">
-            <a class="navbar-brand" href="/index.html">
-                <i class="fas fa-tools me-2"></i>
-                Sistema de Controle
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-    `;
+            <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+            <a class="navbar-brand" href="/index.html"><i class="fas fa-tools me-2"></i>Sistema de Controle</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarNav"><ul class="navbar-nav ms-auto">`;
 
-    for (const key in menuItems) {
-        const item = menuItems[key];
+    Object.entries(menuItems).forEach(([key, item]) => {
         const isActive = key === activePage || (item.dropdown && item.dropdown.some(d => d.href.includes(activePage)));
-
         if (item.dropdown) {
-            menuHtml += `
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle ${isActive ? 'active' : ''}" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="fas ${item.icon} me-1"></i>${item.text}
-                    </a>
-                    <ul class="dropdown-menu">
-                        ${item.dropdown.map(d => `
-                            <li><a class="dropdown-item" href="${d.href}"><i class="fas ${d.icon} me-2"></i>${d.text}</a></li>
-                        `).join('')}
-                    </ul>
-                </li>
-            `;
+            topMenuHtml += `<li class="nav-item dropdown"><a class="nav-link dropdown-toggle ${isActive ? 'active' : ''}" href="#" role="button" data-bs-toggle="dropdown"><i class="fas ${item.icon} me-1"></i>${item.text}</a><ul class="dropdown-menu">${item.dropdown.map(d => `<li><a class="dropdown-item" href="${d.href}"><i class="fas ${d.icon} me-2"></i>${d.text}</a></li>`).join('')}</ul></li>`;
         } else {
-            menuHtml += `
-                <li class="nav-item">
-                    <a class="nav-link ${isActive ? 'active' : ''}" href="${item.href}">
-                        <i class="fas ${item.icon} me-1"></i>${item.text}
-                    </a>
-                </li>
-            `;
+            topMenuHtml += `<li class="nav-item"><a class="nav-link ${isActive ? 'active' : ''}" href="${item.href}"><i class="fas ${item.icon} me-1"></i>${item.text}</a></li>`;
         }
-    }
+    });
+    topMenuHtml += `</ul></div></div>`;
+    nav.innerHTML = topMenuHtml;
 
-    menuHtml += `
-                </ul>
-            </div>
-        </div>
-    `;
-
-    nav.innerHTML = menuHtml;
+    // --- Populate Sidebar Menu ---
+    let sidebarHtml = '';
+    Object.entries(menuItems).forEach(([key, item]) => {
+        const isActive = key === activePage || (item.dropdown && item.dropdown.some(d => d.href.includes(activePage)));
+        if (item.dropdown) {
+            sidebarHtml += `<a class="nav-link" href="${item.dropdown[0].href}"><i class="fas ${item.icon}"></i>${item.text}</a>`;
+        } else {
+            sidebarHtml += `<a class="nav-link ${isActive ? 'active' : ''}" href="${item.href}"><i class="fas ${item.icon}"></i>${item.text}</a>`;
+        }
+    });
+    sidebarMenu.innerHTML = sidebarHtml;
 }
 
 
