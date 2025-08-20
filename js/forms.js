@@ -109,13 +109,13 @@ async function validateForm() {
     const dataVenda = fields.dataVenda.value;
     const dataDevolucao = fields.dataDevolucao.value;
     
-    if (dataVenda && dataDevolucao && new Date(dataDevolucao) < new Date(dataVenda)) {
+    if (dataVenda && dataDevolucao && parseLocalDate(dataDevolucao) < parseLocalDate(dataVenda)) {
         fields.dataDevolucao.setCustomValidity('Data da devolução não pode ser anterior à data da venda.');
         isValid = false;
     }
 
     // Check if return date is not in the future
-    if (dataDevolucao && new Date(dataDevolucao) > new Date()) {
+    if (dataDevolucao && parseLocalDate(dataDevolucao) > new Date()) {
         fields.dataDevolucao.setCustomValidity('Data da devolução não pode ser no futuro.');
         isValid = false;
     }
@@ -331,12 +331,12 @@ function validateDateFields() {
     dataDevolucao.setCustomValidity('');
 
     if (saleDate && returnDate) {
-        if (new Date(returnDate) < new Date(saleDate)) {
+        if (parseLocalDate(returnDate) < parseLocalDate(saleDate)) {
             dataDevolucao.setCustomValidity('Data da devolução não pode ser anterior à data da venda.');
         }
     }
 
-    if (returnDate && new Date(returnDate) > new Date()) {
+    if (returnDate && parseLocalDate(returnDate) > new Date()) {
         dataDevolucao.setCustomValidity('Data da devolução não pode ser no futuro.');
     }
 
@@ -386,7 +386,7 @@ function clearValidationMessages() {
  * @returns {boolean} True if valid date
  */
 function isValidDate(dateString) {
-    const date = new Date(dateString);
+    const date = parseLocalDate(dateString);
     return date instanceof Date && !isNaN(date.getTime());
 }
 

@@ -131,10 +131,10 @@ async function addDevolution(devolutionData) {
         }
 
         // Validate dates
-        const saleDate = new Date(devolutionData.data_venda);
-        const returnDate = new Date(devolutionData.data_devolucao);
+        const saleDate = parseLocalDate(devolutionData.data_venda);
+        const returnDate = parseLocalDate(devolutionData.data_devolucao);
         
-        if (isNaN(saleDate.getTime()) || isNaN(returnDate.getTime())) {
+        if (!saleDate || !returnDate) {
             throw new Error('Datas inválidas fornecidas');
         }
 
@@ -552,9 +552,9 @@ async function addDevolutionWithParts(devolutionData) {
         });
 
         // Validate dates
-        const returnDate = new Date(devolutionData.data_devolucao);
+        const returnDate = parseLocalDate(devolutionData.data_devolucao);
         if (devolutionData.data_venda) {
-            const saleDate = new Date(devolutionData.data_venda);
+            const saleDate = parseLocalDate(devolutionData.data_venda);
             if (returnDate < saleDate) {
                 throw new Error('Data da devolução não pode ser anterior à data da venda');
             }
