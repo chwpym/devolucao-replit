@@ -4,7 +4,7 @@
  */
 
 const DB_NAME = 'dbRetornos';
-const DB_VERSION = 5;
+const DB_VERSION = 2;
 const STORE_NAME = 'devolucoes';
 
 let dbInstance = null;
@@ -22,65 +22,44 @@ async function initDatabase() {
             upgrade(db, oldVersion, newVersion, transaction) {
                 console.log(`Database upgrade from version ${oldVersion} to ${newVersion}`);
 
-                // Devolutions store
+                // Create the main store for devolutions if it doesn't exist
                 if (!db.objectStoreNames.contains(STORE_NAME)) {
-                    const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-                    store.createIndex('codigo_peca', 'codigo_peca');
-                    store.createIndex('cliente', 'cliente');
-                    store.createIndex('data_devolucao', 'data_devolucao');
-                    console.log('Devolutions store created.');
-                }
-                if (oldVersion < 3) {
-                    const store = transaction.objectStore(STORE_NAME);
-                    if (!store.indexNames.contains('updated_at')) {
-                        store.createIndex('updated_at', 'updated_at');
-                        console.log('updated_at index added to devolutions store.');
-                    }
+                    const store = db.createObjectStore(STORE_NAME, {
+                        keyPath: 'id',
+                        autoIncrement: true
+                    });
+
+                    // Create indices for fast searching
+                    store.createIndex('codigo_peca', 'codigo_peca', { unique: false });
+                    store.createIndex('cliente', 'cliente', { unique: false });
+                    store.createIndex('mecanico', 'mecanico', { unique: false });
+                    store.createIndex('requisicao_venda', 'requisicao_venda', { unique: false });
+                    store.createIndex('acao_requisicao', 'acao_requisicao', { unique: false });
+                    store.createIndex('data_venda', 'data_venda', { unique: false });
+                    store.createIndex('data_devolucao', 'data_devolucao', { unique: false });
+                    store.createIndex('descricao_peca', 'descricao_peca', { unique: false });
+
+                    console.log('Devolutions store created with indices');
                 }
 
-                // People store
-                if (!db.objectStoreNames.contains('pessoas')) {
-                    const peopleStore = db.createObjectStore('pessoas', { keyPath: 'id', autoIncrement: true });
+                // Create people store if it doesn't exist (version 2+)
+                if (newVersion >= 2 && !db.objectStoreNames.contains('pessoas')) {
+                    const peopleStore = db.createObjectStore('pessoas', {
+                        keyPath: 'id',
+                        autoIncrement: true
+                    });
+
+                    // Create indices for people store
                     peopleStore.createIndex('codigo', 'codigo', { unique: true });
-                    peopleStore.createIndex('nome', 'nome');
-                    console.log('People store created.');
-                }
-                if (oldVersion < 3) {
-                    const peopleStore = transaction.objectStore('pessoas');
-                    if (!peopleStore.indexNames.contains('updated_at')) {
-                        peopleStore.createIndex('updated_at', 'updated_at');
-                        console.log('updated_at index added to people store.');
-                    }
+                    peopleStore.createIndex('nome', 'nome', { unique: false });
+                    peopleStore.createIndex('tipo', 'tipo', { unique: false });
+                    peopleStore.createIndex('status', 'status', { unique: false });
+                    peopleStore.createIndex('documento', 'documento', { unique: false });
+
+                    console.log('People store created with indices');
                 }
 
-                // Company settings store
-                if (oldVersion < 4) {
-                    if (!db.objectStoreNames.contains('configuracoes')) {
-                        db.createObjectStore('configuracoes', { keyPath: 'id' });
-                        console.log('Configuracoes store created.');
-                    }
-                }
-                if (oldVersion < 5) {
-                    if (!db.objectStoreNames.contains('fornecedores')) {
-                        const store = db.createObjectStore('fornecedores', { keyPath: 'id', autoIncrement: true });
-                        store.createIndex('uuid', 'uuid', { unique: true });
-                        store.createIndex('name', 'name');
-                        store.createIndex('updated_at', 'updated_at');
-                        console.log('Fornecedores store created.');
-                    }
-                    if (!db.objectStoreNames.contains('garantias')) {
-                        const store = db.createObjectStore('garantias', { keyPath: 'id', autoIncrement: true });
-                        store.createIndex('uuid', 'uuid', { unique: true });
-                        store.createIndex('status', 'status');
-                        store.createIndex('updated_at', 'updated_at');
-                        console.log('Garantias store created.');
-                    }
-                    if (!db.objectStoreNames.contains('garantia_anexos')) {
-                        const store = db.createObjectStore('garantia_anexos', { keyPath: 'id', autoIncrement: true });
-                        store.createIndex('warrantyId', 'warrantyId');
-                        console.log('Garantia Anexos store created.');
-                    }
-                }
+                console.log('Database initialized with proper schema and indices');
             }
         });
 
@@ -131,10 +110,10 @@ async function addDevolution(devolutionData) {
         }
 
         // Validate dates
-        const saleDate = parseLocalDate(devolutionData.data_venda);
-        const returnDate = parseLocalDate(devolutionData.data_devolucao);
+        const saleDate = new Date(devolutionData.data_venda);
+        const returnDate = new Date(devolutionData.data_devolucao);
         
-        if (!saleDate || !returnDate) {
+        if (isNaN(saleDate.getTime()) || isNaN(returnDate.getTime())) {
             throw new Error('Datas inválidas fornecidas');
         }
 
@@ -150,7 +129,6 @@ async function addDevolution(devolutionData) {
 
         // Prepare data for storage
         const dataToStore = {
-            uuid: devolutionData.uuid || generateUUID(),
             codigo_peca: devolutionData.codigo_peca.toString().trim(),
             descricao_peca: devolutionData.descricao_peca.toString().trim(),
             quantidade_devolvida: quantity,
@@ -552,9 +530,9 @@ async function addDevolutionWithParts(devolutionData) {
         });
 
         // Validate dates
-        const returnDate = parseLocalDate(devolutionData.data_devolucao);
+        const returnDate = new Date(devolutionData.data_devolucao);
         if (devolutionData.data_venda) {
-            const saleDate = parseLocalDate(devolutionData.data_venda);
+            const saleDate = new Date(devolutionData.data_venda);
             if (returnDate < saleDate) {
                 throw new Error('Data da devolução não pode ser anterior à data da venda');
             }
@@ -568,7 +546,6 @@ async function addDevolutionWithParts(devolutionData) {
             const part = devolutionData.parts[i];
             
             const dataToStore = {
-                uuid: part.uuid || generateUUID(),
                 codigo_peca: part.codigo_peca.toString().trim(),
                 descricao_peca: part.descricao_peca.toString().trim(),
                 quantidade_devolvida: parseInt(part.quantidade_devolvida),

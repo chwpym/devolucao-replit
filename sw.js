@@ -1,19 +1,14 @@
 importScripts('/js/sync.js');
 
-const CACHE_NAME = 'controle-pecas-v2.0.0';
+const CACHE_NAME = 'controle-pecas-v1.0.0';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/pages/backup.html',
-  '/pages/cadastro-fornecedor.html',
-  '/pages/cadastro-garantia.html',
-  '/pages/cadastro-pessoas.html',
-  '/pages/cadastro.html',
-  '/pages/configuracoes.html',
-  '/pages/consulta-garantia.html',
-  '/pages/consulta.html',
-  '/pages/relatorio-garantia.html',
-  '/pages/relatorio.html',
+  '/cadastro.html',
+  '/cadastro-pessoas.html',
+  '/consulta.html',
+  '/relatorio.html',
+  '/backup.html',
   '/css/styles.css',
   '/js/database.js',
   '/js/pessoas.js',
@@ -21,20 +16,11 @@ const urlsToCache = [
   '/js/reports.js',
   '/js/backup.js',
   '/js/utils.js',
-  '/js/sync.js',
-  '/js/menu.js',
-  '/js/fornecedores.js',
-  '/js/garantias.js',
-  '/js/relatorios-garantia.js',
-  '/js/pdf-generator.js',
-  '/favicon.svg',
   '/manifest.json',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://cdn.jsdelivr.net/npm/idb@7/build/umd.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'
+  'https://cdn.jsdelivr.net/npm/idb@7/build/umd.js'
 ];
 
 // Install event - cache resources
@@ -191,9 +177,17 @@ self.addEventListener('notificationclick', function(event) {
 async function doBackgroundSync() {
   try {
     console.log('Service Worker: Performing background sync');
-    await self.triggerSync();
+
+    // Here you could implement data synchronization logic
+    // For example, sync pending devolutions or people data
+
+    // For now, just log the sync attempt
+    console.log('Service Worker: Background sync completed');
+
+    return Promise.resolve();
   } catch (error) {
     console.error('Service Worker: Background sync failed', error);
+    throw error;
   }
 }
 

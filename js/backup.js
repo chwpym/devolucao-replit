@@ -16,44 +16,47 @@ async function exportBackup() {
 
         const includeDevolutions = document.getElementById('includeDevolutions').checked;
         const includePeople = document.getElementById('includePeople').checked;
-        const includeWarranties = document.getElementById('includeWarranties').checked;
-        const includeSuppliers = document.getElementById('includeSuppliers').checked;
 
-        if (!includeDevolutions && !includePeople && !includeWarranties && !includeSuppliers) {
+        if (!includeDevolutions && !includePeople) {
             throw new Error('Selecione pelo menos um tipo de dados para backup');
         }
 
         const backupData = {
             metadata: {
                 exportDate: new Date().toISOString(),
-                version: '2.0', // New version with warranties
+                version: '1.0',
                 systemName: 'Sistema de Controle de Retorno de Peças',
                 includes: {
                     devolutions: includeDevolutions,
-                    people: includePeople,
-                    warranties: includeWarranties,
-                    suppliers: includeSuppliers,
+                    people: includePeople
                 }
             },
             data: {}
         };
 
-        const db = await getDatabase();
-
+        // Export devolutions
         if (includeDevolutions) {
-            backupData.data.devolutions = await db.getAll('devolucoes');
+            try {
+                const devolutions = await getAllDevolutions();
+                backupData.data.devolutions = devolutions;
+                console.log(`Exported ${devolutions.length} devolutions`);
+            } catch (error) {
+                console.warn('Error exporting devolutions:', error);
+                backupData.data.devolutions = [];
+            }
         }
+
+        // Export people
         if (includePeople) {
-            backupData.data.people = await db.getAll('pessoas');
+            try {
+                const people = await getAllPeople();
+                backupData.data.people = people;
+                console.log(`Exported ${people.length} people`);
+            } catch (error) {
+                console.warn('Error exporting people:', error);
+                backupData.data.people = [];
+            }
         }
-        if (includeWarranties) {
-            backupData.data.warranties = await db.getAll('garantias');
-        }
-        if (includeSuppliers) {
-            backupData.data.suppliers = await db.getAll('fornecedores');
-        }
-        // Always include settings
-        backupData.data.settings = await db.get('configuracoes', 'main');
 
         // Create and download file
         const jsonString = JSON.stringify(backupData, null, 2);
@@ -129,14 +132,9 @@ function validateBackupFile() {
             if (data.devolutions) {
                 details += `<li><strong>Devoluções:</strong> ${data.devolutions.length} registros</li>`;
             }
+
             if (data.people) {
                 details += `<li><strong>Pessoas:</strong> ${data.people.length} registros</li>`;
-            }
-            if (data.warranties) {
-                details += `<li><strong>Garantias:</strong> ${data.warranties.length} registros</li>`;
-            }
-            if (data.suppliers) {
-                details += `<li><strong>Fornecedores:</strong> ${data.suppliers.length} registros</li>`;
             }
 
             details += '</ul>';
@@ -186,36 +184,55 @@ async function importBackup() {
         restoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Restaurando...';
 
         const backupData = window.currentBackupData;
-        const db = await getDatabase();
-        const dataToImport = backupData.data;
+        let importedDevolutions = 0;
+        let importedPeople = 0;
 
+        // Clear existing data if requested
         if (clearData) {
-            for (const storeName of Object.keys(dataToImport)) {
-                if (db.objectStoreNames.contains(storeName)) {
-                    await db.clear(storeName);
+            if (backupData.data.devolutions) {
+                await clearDevolutionsData();
+            }
+            if (backupData.data.people) {
+                await clearPeopleData();
+            }
+        }
+
+        // Import people first (they might be referenced by devolutions)
+        if (backupData.data.people && backupData.data.people.length > 0) {
+            for (const person of backupData.data.people) {
+                try {
+                    // Remove ID to allow auto-increment
+                    const { id, ...personData } = person;
+                    personData.imported_at = new Date().toISOString();
+
+                    await addPerson(personData);
+                    importedPeople++;
+                } catch (error) {
+                    console.warn('Error importing person:', error);
                 }
             }
         }
 
-        for (const storeName in dataToImport) {
-            if (db.objectStoreNames.contains(storeName) && Array.isArray(dataToImport[storeName])) {
-                const tx = db.transaction(storeName, 'readwrite');
-                for (const record of dataToImport[storeName]) {
-                    const { id, ...recordData } = record;
-                    recordData.imported_at = new Date().toISOString();
-                    await tx.store.add(recordData);
+        // Import devolutions
+        if (backupData.data.devolutions && backupData.data.devolutions.length > 0) {
+            for (const devolution of backupData.data.devolutions) {
+                try {
+                    // Remove ID to allow auto-increment
+                    const { id, ...devolutionData } = devolution;
+                    devolutionData.imported_at = new Date().toISOString();
+
+                    await addDevolution(devolutionData);
+                    importedDevolutions++;
+                } catch (error) {
+                    console.warn('Error importing devolution:', error);
                 }
-                await tx.done;
-                showAlert(`${dataToImport[storeName].length} registros importados para ${storeName}.`, 'success');
             }
         }
 
-        // Import settings
-        if (dataToImport.settings) {
-            await db.put('configuracoes', dataToImport.settings);
-        }
-
-        showAlert(`Backup restaurado com sucesso!`, 'success');
+        showAlert(
+            `Backup restaurado com sucesso! Importados: ${importedDevolutions} devoluções, ${importedPeople} pessoas.`,
+            'success'
+        );
 
         // Refresh statistics
         await loadDatabaseStatistics();
