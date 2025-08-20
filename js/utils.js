@@ -760,3 +760,21 @@ window.initBackupReminder = initBackupReminder;
 window.showBackupReminderModal = showBackupReminderModal;
 window.goToBackupPage = goToBackupPage;
 
+/**
+ * Parses a date string (YYYY-MM-DD) to a Date object in local timezone,
+ * avoiding timezone conversion issues.
+ * @param {string} dateString - The date string from an input.
+ * @returns {Date | null} The parsed date or null if invalid.
+ */
+function parseLocalDate(dateString) {
+    if (!dateString || typeof dateString !== 'string') return null;
+    const parts = dateString.split('-');
+    if (parts.length !== 3) return null;
+
+    const [year, month, day] = parts.map(Number);
+    if (isNaN(year) || isNaN(month) || isNaN(day)) return null;
+
+    // Creates the date based on local timezone
+    return new Date(year, month - 1, day);
+}
+window.parseLocalDate = parseLocalDate;
