@@ -6,42 +6,58 @@
     <title>Backup e Restore - Sistema de Controle</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="../css/styles.css" rel="stylesheet">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link href="css/styles.css" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <button class="sidebar-toggle" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
-            </button>
-            <a class="navbar-brand" href="../index.html">
+            <a class="navbar-brand" href="index.html">
                 <i class="fas fa-tools me-2"></i>
-                Sistema de Controle
+                Sistema de Controle de Retorno de Peças
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <!-- Populated by menu.js -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="cadastroDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-plus-circle me-1"></i>Cadastrar
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="cadastro.html">
+                                <i class="fas fa-undo me-2"></i>Devolução
+                            </a></li>
+                            <li><a class="dropdown-item" href="cadastro-pessoas.html">
+                                <i class="fas fa-user me-2"></i>Cliente/Mecânico
+                            </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="consulta.html">
+                            <i class="fas fa-search me-1"></i>Consultar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="relatorio.html">
+                            <i class="fas fa-chart-bar me-1"></i>Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="backup.html">
+                            <i class="fas fa-download me-1"></i>Backup
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
-
-    <!-- Sidebar for mobile -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h4><i class="fas fa-tools me-2"></i>Menu</h4>
-            <button class="sidebar-close" onclick="closeSidebar()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="sidebar-menu">
-            <!-- Populated by menu.js -->
-        </div>
-    </div>
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
     <!-- Main Content -->
     <div class="container mt-4">
@@ -100,20 +116,6 @@
                             <input class="form-check-input" type="checkbox" id="includePeople" checked>
                             <label class="form-check-label" for="includePeople">
                                 Incluir pessoas (clientes/mecânicos)
-                            </label>
-                        </div>
-
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="includeWarranties" checked>
-                            <label class="form-check-label" for="includeWarranties">
-                                Incluir garantias
-                            </label>
-                        </div>
-
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="includeSuppliers" checked>
-                            <label class="form-check-label" for="includeSuppliers">
-                                Incluir fornecedores
                             </label>
                         </div>
 
@@ -248,43 +250,21 @@
     <!-- Footer -->
     <footer class="bg-light mt-5 py-4">
         <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="text-center text-muted">
-                    <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
-                </div>
-                <div id="syncStatus" class="text-muted small"></div>
+            <div class="text-center text-muted">
+                <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
             </div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
-    <script src="../js/menu.js"></script>
-    <script src="../js/database.js"></script>
-    <script src="../js/pessoas.js"></script>
-    <script src="../js/backup.js"></script>
-    <script src="../js/utils.js"></script>
-    <script src="../js/sync.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/pessoas.js"></script>
+    <script src="js/backup.js"></script>
+    <script src="js/utils.js"></script>
     <script>
-        // Sidebar functions
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.add('show');
-            overlay.classList.add('show');
-        }
-
-        function closeSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.remove('show');
-            overlay.classList.remove('show');
-        }
-
         document.addEventListener('DOMContentLoaded', async function() {
-            if (window.populateMenu) {
-                window.populateMenu('backup', '../');
-            }
             try {
                 // Initialize databases
                 await initDatabase();

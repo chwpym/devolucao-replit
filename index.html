@@ -14,7 +14,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Controle Peças">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiM2NjdFRUEiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0yMi43IDEzLjJMMjIgMTMuN0wyMCAyLjhDMjAgMS43IDE5LjMgMSAxOC4yIDFIOS44Qzg3IDEgOCAxLjcgOCAyLjhWMy41SDE4VjEySDE2VjE0SDE4VjE5VjIxVjIySDZWMjFWMTlWOEg0VjE5SDJWOUMxLjUgOS4xIDEgOS42IDEgMTAuMlYxOC4yQzEgMTkuMyAxLjcgMjAgMi44IDIwSDQuMlYyMS4yQzQuMiAyMi4zIDQuOSAyMyA2IDIzSDE5QzIwLjEgMjMgMjAuOCAyMi4zIDIwLjggMjEuMlYyMC44QzIxIDIwLjcgMjEuMiAyMC42IDIxLjMgMjAuNUwyMS44IDIwLjFMMjIuNyAxOVMxNC4yIDEzLjYgMTMuNyAxMy4yWk01IDE4SDE3VjE2SDVWMThaTTUgMTNIMTdWMTFINVYxM1oiLz4KPHN2Zz4KPC9zdmc+">
 </head>
 <body>
     <!-- Navigation -->
@@ -31,7 +31,43 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav"></div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="cadastroDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-plus-circle me-1"></i>Cadastrar
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="cadastro.html">
+                                <i class="fas fa-undo me-2"></i>Devolução
+                            </a></li>
+                            <li><a class="dropdown-item" href="cadastro-pessoas.html">
+                                <i class="fas fa-user me-2"></i>Cliente/Mecânico
+                            </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="consulta.html">
+                            <i class="fas fa-search me-1"></i>Consultar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="relatorio.html">
+                            <i class="fas fa-chart-bar me-1"></i>Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="backup.html">
+                            <i class="fas fa-download me-1"></i>Backup
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
@@ -44,7 +80,24 @@
             </button>
         </div>
         <div class="sidebar-menu">
-            <!-- Populated by menu.js -->
+            <a href="index.html" class="nav-link active">
+                <i class="fas fa-home"></i>Dashboard
+            </a>
+            <a href="cadastro.html" class="nav-link">
+                <i class="fas fa-plus-circle"></i>Cadastrar Devolução
+            </a>
+            <a href="cadastro-pessoas.html" class="nav-link">
+                <i class="fas fa-users"></i>Cadastrar Pessoa
+            </a>
+            <a href="consulta.html" class="nav-link">
+                <i class="fas fa-search"></i>Consultar
+            </a>
+            <a href="relatorio.html" class="nav-link">
+                <i class="fas fa-chart-bar"></i>Relatórios
+            </a>
+            <a href="backup.html" class="nav-link">
+                <i class="fas fa-database"></i>Backup
+            </a>
         </div>
     </div>
 
@@ -136,19 +189,19 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <a href="/pages/cadastro.html" class="btn btn-primary btn-lg w-100">
+                                <a href="cadastro.html" class="btn btn-primary btn-lg w-100">
                                     <i class="fas fa-plus-circle me-2"></i>
                                     Nova Devolução
                                 </a>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <a href="/pages/consulta.html" class="btn btn-outline-primary btn-lg w-100">
+                                <a href="consulta.html" class="btn btn-outline-primary btn-lg w-100">
                                     <i class="fas fa-search me-2"></i>
                                     Buscar Devoluções
                                 </a>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <a href="/pages/relatorio.html" class="btn btn-outline-primary btn-lg w-100">
+                                <a href="relatorio.html" class="btn btn-outline-primary btn-lg w-100">
                                     <i class="fas fa-chart-bar me-2"></i>
                                     Ver Relatórios
                                 </a>
@@ -165,7 +218,7 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Devoluções Recentes</h5>
-                        <a href="/pages/consulta.html" class="btn btn-sm btn-outline-primary">Ver Todas</a>
+                        <a href="consulta.html" class="btn btn-sm btn-outline-primary">Ver Todas</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -198,11 +251,8 @@
     <!-- Footer -->
     <footer class="bg-light mt-5 py-4">
         <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="text-center text-muted">
-                    <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
-                </div>
-                <div id="syncStatus" class="text-muted small"></div>
+            <div class="text-center text-muted">
+                <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
             </div>
         </div>
     </footer>
@@ -212,13 +262,9 @@
     <script src="js/menu.js"></script>
     <script src="js/database.js"></script>
     <script src="js/utils.js"></script>
-    <script src="js/sync.js"></script>
     <script src="js/init.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
-            if (window.populateMenu) {
-                window.populateMenu('dashboard');
-            }
             try {
                 // Initialize database
                 await initDatabase();

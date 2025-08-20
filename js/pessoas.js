@@ -62,8 +62,6 @@ async function addPerson(personData) {
 
         // Prepare data for storage
         const dataToStore = {
-            uuid: personData.uuid || generateUUID(),
-            codigo: personData.codigo || await generatePersonCode(),
             nome: personData.nome.toString().trim(),
             tipo: personData.tipo,
             telefone: personData.telefone ? personData.telefone.toString().trim() : '',
@@ -529,24 +527,11 @@ window.loadRecentPeople = loadRecentPeople;
 async function updatePerson(id, personData) {
     try {
         const db = await getDatabase();
-        const tx = db.transaction(PEOPLE_STORE_NAME, 'readwrite');
-        const store = tx.objectStore(PEOPLE_STORE_NAME);
 
-        const existingRecord = await store.get(id);
-        if (!existingRecord) {
-            throw new Error('Registro de pessoa não encontrado para atualização.');
-        }
+        // Add updated timestamp
+        personData.updated_at = new Date().toISOString();
 
-        const updatedRecord = {
-            ...existingRecord,
-            ...personData,
-            id: id, // Ensure ID is preserved
-            updated_at: new Date().toISOString(),
-        };
-
-        await store.put(updatedRecord);
-        await tx.done;
-
+        await db.put(PEOPLE_STORE_NAME, { ...personData, id });
         console.log('Person updated successfully with ID:', id);
         return true;
     } catch (error) {
