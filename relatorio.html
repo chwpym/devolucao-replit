@@ -549,7 +549,7 @@
                         <span class="badge bg-primary">${action.totalQuantity}</span>
                     </td>
                     <td>${action.occurrences}</td>
-                    <td>${((action.occurrences / totalOccurrences) * 100).toFixed(1)}%</td>
+                    <td>${formatNumber((action.occurrences / totalOccurrences) * 100, 1)}%</td>
                 </tr>
             `).join('');
         }
@@ -661,7 +661,7 @@
                         `"${action.action}"`,
                         action.totalQuantity,
                         action.occurrences,
-                        `${((action.occurrences / totalOccurrences) * 100).toFixed(1)}%`
+                        `${formatNumber((action.occurrences / totalOccurrences) * 100, 1)}%`
                     ]);
                     break;
             }
