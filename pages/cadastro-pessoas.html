@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Pessoas - Sistema de Controle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <!-- Populated by menu.js -->
+        </div>
+    </nav>
+
+    <!-- Sidebar for mobile -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="fas fa-tools me-2"></i>Menu</h4>
+            <button class="sidebar-close" onclick="closeSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-menu">
+            <!-- Populated by menu.js -->
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="page-header mb-4">
+            <h1 class="display-5">Cadastro de Clientes e Mecânicos</h1>
+            <p class="text-muted">Adicione, edite ou visualize pessoas no sistema</p>
+        </div>
+
+        <div class="row">
+            <!-- Registration Form -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0" id="form-title">
+                            <i class="fas fa-plus-circle me-2"></i>
+                            Adicionar Nova Pessoa
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="personForm" novalidate>
+                            <input type="hidden" id="personId">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nome" class="form-label">Nome Completo</label>
+                                    <input type="text" class="form-control" id="nome" required minlength="3">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="codigo" class="form-label">Código</label>
+                                    <input type="text" class="form-control" id="codigo" disabled>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="tipo" class="form-label">Tipo</label>
+                                    <select class="form-select" id="tipo" required>
+                                        <option value="" disabled selected>Selecione...</option>
+                                        <option value="Cliente">Cliente</option>
+                                        <option value="Mecanico">Mecânico</option>
+                                        <option value="Ambos">Ambos</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="status" class="form-label">Status</label>
+                                    <select class="form-select" id="status" required>
+                                        <option value="Ativo" selected>Ativo</option>
+                                        <option value="Inativo">Inativo</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="documento" class="form-label">CPF/CNPJ</label>
+                                    <input type="text" class="form-control" id="documento">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefone" class="form-label">Telefone</label>
+                                    <input type="tel" class="form-control" id="telefone">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="observacoes" class="form-label">Observações</label>
+                                <textarea class="form-control" id="observacoes" rows="3"></textarea>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-secondary me-2" id="cancelButton" style="display: none;">Cancelar</button>
+                                <button type="submit" class="btn btn-primary" id="saveButton">
+                                    <i class="fas fa-save me-1"></i>
+                                    Salvar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- People List -->
+            <div class="col-lg-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-users me-2"></i>
+                            Pessoas Cadastradas
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive" style="max-height: 400px;">
+                            <table class="table table-hover table-sm">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nome</th>
+                                        <th>Tipo</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="people-table-body">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light mt-5 py-4">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-center text-muted">
+                    <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
+                </div>
+                <div id="syncStatus" class="text-muted small"></div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/database.js"></script>
+    <script src="../js/pessoas.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/sync.js"></script>
+    <script src="../js/init.js"></script>
+    <script>
+        // Sidebar functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.add('show');
+            overlay.classList.add('show');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (window.populateMenu) {
+                window.populateMenu('cadastros', '../');
+            }
+            try {
+                if (window.initPeoplePage) {
+                    await initPeoplePage();
+                }
+            } catch (error) {
+                console.error('Error initializing people page:', error);
+            }
+        });
+    </script>
+</body>
+</html>

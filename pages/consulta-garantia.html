@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Garantias - Sistema de Controle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <!-- Populated by menu.js -->
+        </div>
+    </nav>
+
+    <!-- Sidebar for mobile -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="fas fa-tools me-2"></i>Menu</h4>
+            <button class="sidebar-close" onclick="closeSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-menu">
+            <!-- Populated by menu.js -->
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="page-header mb-4">
+            <h1 class="display-5">Consulta de Garantias</h1>
+            <p class="text-muted">Filtre e visualize os registros de garantia</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-filter me-2"></i> Filtros de Pesquisa</h5>
+            </div>
+            <div class="card-body">
+                <form id="searchForm">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="searchProductId" class="form-label">Código do Produto</label>
+                            <input type="text" class="form-control" id="searchProductId">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="searchDefect" class="form-label">Defeito</label>
+                            <input type="text" class="form-control" id="searchDefect">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="searchStatus" class="form-label">Status</label>
+                            <select class="form-select" id="searchStatus">
+                                <option value="">Todos</option>
+                                <option value="Pendente">Pendente</option>
+                                <option value="Aprovada">Aprovada</option>
+                                <option value="Rejeitada">Rejeitada</option>
+                                <option value="Enviada para Análise">Enviada para Análise</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search me-1"></i> Pesquisar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-list-ul me-2"></i> Resultados da Pesquisa</h5>
+                <span id="resultsCount" class="badge bg-primary">0 registros</span>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>Cód. Produto</th>
+                                <th>Descrição</th>
+                                <th>Defeito</th>
+                                <th>Status</th>
+                                <th>Data Devolução</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <!-- Results will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light mt-5 py-4">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-center text-muted">
+                    <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
+                </div>
+                <div id="syncStatus" class="text-muted small"></div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/database.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/sync.js"></script>
+    <script src="../js/garantias.js"></script>
+    <script>
+        // Sidebar functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.add('show');
+            overlay.classList.add('show');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.populateMenu) {
+                window.populateMenu('garantias', '../');
+            }
+            // Logic for this page will be in js/garantias.js
+        });
+    </script>
+</body>
+</html>

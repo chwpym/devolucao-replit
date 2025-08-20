@@ -3,71 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Controle de Retorno de Peças</title>
+    <title>Dashboard - Sistema de Controle</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
-    
-    <!-- PWA Configuration -->
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#667eea">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667EEA">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Controle Peças">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiM2NjdFRUEiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0yMi43IDEzLjJMMjIgMTMuN0wyMCAyLjhDMjAgMS43IDE5LjMgMSAxOC4yIDFIOS44Qzg3IDEgOCAxLjcgOCAyLjhWMy41SDE4VjEySDE2VjE0SDE4VjE5VjIxVjIySDZWMjFWMTlWOEg0VjE5SDJWOUMxLjUgOS4xIDEgOS42IDEgMTAuMlYxOC4yQzEgMTkuMyAxLjcgMjAgMi44IDIwSDQuMlYyMS4yQzQuMiAyMi4zIDQuOSAyMyA2IDIzSDE5QzIwLjEgMjMgMjAuOCAyMi4zIDIwLjggMjEuMlYyMC44QzIxIDIwLjcgMjEuMiAyMC42IDIxLjMgMjAuNUwyMS44IDIwLjFMMjIuNyAxOVMxNC4yIDEzLjYgMTMuNyAxMy4yWk01IDE4SDE3VjE2SDVWMThaTTUgMTNIMTdWMTFINVYxM1oiLz4KPHN2Zz4KPC9zdmc+">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <button class="sidebar-toggle" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-            <a class="navbar-brand" href="index.html">
-                <i class="fas fa-tools me-2"></i>
-                Sistema de Controle de Retorno de Peças
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="index.html">
-                            <i class="fas fa-home me-1"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="cadastroDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-plus-circle me-1"></i>Cadastrar
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="cadastro.html">
-                                <i class="fas fa-undo me-2"></i>Devolução
-                            </a></li>
-                            <li><a class="dropdown-item" href="cadastro-pessoas.html">
-                                <i class="fas fa-user me-2"></i>Cliente/Mecânico
-                            </a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="consulta.html">
-                            <i class="fas fa-search me-1"></i>Consultar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="relatorio.html">
-                            <i class="fas fa-chart-bar me-1"></i>Relatórios
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="backup.html">
-                            <i class="fas fa-download me-1"></i>Backup
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <!-- Populated by menu.js -->
         </div>
     </nav>
 
@@ -80,28 +31,9 @@
             </button>
         </div>
         <div class="sidebar-menu">
-            <a href="index.html" class="nav-link active">
-                <i class="fas fa-home"></i>Dashboard
-            </a>
-            <a href="cadastro.html" class="nav-link">
-                <i class="fas fa-plus-circle"></i>Cadastrar Devolução
-            </a>
-            <a href="cadastro-pessoas.html" class="nav-link">
-                <i class="fas fa-users"></i>Cadastrar Pessoa
-            </a>
-            <a href="consulta.html" class="nav-link">
-                <i class="fas fa-search"></i>Consultar
-            </a>
-            <a href="relatorio.html" class="nav-link">
-                <i class="fas fa-chart-bar"></i>Relatórios
-            </a>
-            <a href="backup.html" class="nav-link">
-                <i class="fas fa-database"></i>Backup
-            </a>
+            <!-- Populated by menu.js -->
         </div>
     </div>
-
-    <!-- Sidebar overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
     <!-- Main Content -->
@@ -116,14 +48,14 @@
         </div>
 
         <!-- Statistics Cards -->
-        <div class="row mb-4">
+        <div class="row">
             <div class="col-md-3 col-sm-6 mb-3">
                 <div class="card stat-card bg-primary text-white">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h5 class="card-title">Total de Devoluções</h5>
-                                <h2 class="mb-0" id="totalDevolution">0</h2>
+                                <h6 class="card-title">Total Devoluções</h6>
+                                <h3 class="mb-0" id="total-devolucoes">0</h3>
                             </div>
                             <div class="align-self-center">
                                 <i class="fas fa-undo fa-2x opacity-75"></i>
@@ -137,11 +69,11 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h5 class="card-title">Devoluções Este Mês</h5>
-                                <h2 class="mb-0" id="monthlyDevolutions">0</h2>
+                                <h6 class="card-title">Total Peças</h6>
+                                <h3 class="mb-0" id="total-pecas">0</h3>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-calendar-month fa-2x opacity-75"></i>
+                                <i class="fas fa-cogs fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -152,11 +84,11 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h5 class="card-title">Peças Distintas</h5>
-                                <h2 class="mb-0" id="distinctParts">0</h2>
+                                <h6 class="card-title">Clientes Únicos</h6>
+                                <h3 class="mb-0" id="clientes-unicos">0</h3>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-cogs fa-2x opacity-75"></i>
+                                <i class="fas fa-users fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -167,44 +99,11 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h5 class="card-title">Clientes Ativos</h5>
-                                <h2 class="mb-0" id="activeCustomers">0</h2>
+                                <h6 class="card-title">Mecânicos Únicos</h6>
+                                <h3 class="mb-0" id="mecanicos-unicos">0</h3>
                             </div>
                             <div class="align-self-center">
-                                <i class="fas fa-users fa-2x opacity-75"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Ações Rápidas</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <a href="cadastro.html" class="btn btn-primary btn-lg w-100">
-                                    <i class="fas fa-plus-circle me-2"></i>
-                                    Nova Devolução
-                                </a>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <a href="consulta.html" class="btn btn-outline-primary btn-lg w-100">
-                                    <i class="fas fa-search me-2"></i>
-                                    Buscar Devoluções
-                                </a>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <a href="relatorio.html" class="btn btn-outline-primary btn-lg w-100">
-                                    <i class="fas fa-chart-bar me-2"></i>
-                                    Ver Relatórios
-                                </a>
+                                <i class="fas fa-user-cog fa-2x opacity-75"></i>
                             </div>
                         </div>
                     </div>
@@ -213,32 +112,28 @@
         </div>
 
         <!-- Recent Devolutions -->
-        <div class="row">
+        <div class="row mt-4">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Devoluções Recentes</h5>
-                        <a href="consulta.html" class="btn btn-sm btn-outline-primary">Ver Todas</a>
+                        <a href="/pages/consulta.html" class="btn btn-sm btn-outline-primary">Ver Todas</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
+                            <table class="table table-hover table-sm">
+                                <thead class="table-light">
                                     <tr>
-                                        <th>Código da Peça</th>
+                                        <th>ID</th>
+                                        <th>Cód. Peça</th>
                                         <th>Descrição</th>
+                                        <th>Qtd.</th>
                                         <th>Cliente</th>
-                                        <th>Data Devolução</th>
-                                        <th>Quantidade</th>
+                                        <th>Data Devol.</th>
                                     </tr>
                                 </thead>
-                                <tbody id="recentDevolutionsTable">
-                                    <tr>
-                                        <td colspan="5" class="text-center text-muted py-4">
-                                            <i class="fas fa-box-open fa-2x mb-2 d-block"></i>
-                                            Nenhuma devolução encontrada
-                                        </td>
-                                    </tr>
+                                <tbody id="recent-devolutions-table">
+                                    <!-- Populated by JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -251,8 +146,11 @@
     <!-- Footer -->
     <footer class="bg-light mt-5 py-4">
         <div class="container">
-            <div class="text-center text-muted">
-                <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-center text-muted">
+                    <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
+                </div>
+                <div id="syncStatus" class="text-muted small"></div>
             </div>
         </div>
     </footer>
@@ -262,107 +160,13 @@
     <script src="js/menu.js"></script>
     <script src="js/database.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/sync.js"></script>
     <script src="js/init.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                // Initialize database
-                await initDatabase();
-                
-                // Load dashboard statistics
-                await loadDashboardStats();
-                
-                // Load recent devolutions
-                await loadRecentDevolutions();
-                
-                // Initialize backup reminder
-                await safeInitBackupReminder();
-            } catch (error) {
-                console.error('Error loading dashboard:', error);
-                showAlert('Erro ao carregar dashboard: ' + error.message, 'danger');
-            }
-        });
-
-        async function loadDashboardStats() {
-            try {
-                const db = await getDatabase();
-                const tx = db.transaction('devolucoes', 'readonly');
-                const store = tx.objectStore('devolucoes');
-                const allDevolutions = await store.getAll();
-
-                // Total devolutions
-                document.getElementById('totalDevolution').textContent = allDevolutions.length;
-
-                // Monthly devolutions
-                const currentMonth = new Date().getMonth();
-                const currentYear = new Date().getFullYear();
-                const monthlyDevolutions = allDevolutions.filter(dev => {
-                    const devDate = new Date(dev.data_devolucao);
-                    return devDate.getMonth() === currentMonth && devDate.getFullYear() === currentYear;
-                });
-                document.getElementById('monthlyDevolutions').textContent = monthlyDevolutions.length;
-
-                // Distinct parts
-                const distinctParts = new Set(allDevolutions.map(dev => dev.codigo_peca));
-                document.getElementById('distinctParts').textContent = distinctParts.size;
-
-                // Active customers
-                const distinctCustomers = new Set(allDevolutions.map(dev => dev.cliente));
-                document.getElementById('activeCustomers').textContent = distinctCustomers.size;
-
-            } catch (error) {
-                console.error('Error loading dashboard stats:', error);
-            }
-        }
-
-        async function loadRecentDevolutions() {
-            try {
-                const db = await getDatabase();
-                const tx = db.transaction('devolucoes', 'readonly');
-                const store = tx.objectStore('devolucoes');
-                const allDevolutions = await store.getAll();
-
-                // Sort by date and get last 5
-                const recentDevolutions = allDevolutions
-                    .sort((a, b) => new Date(b.data_devolucao) - new Date(a.data_devolucao))
-                    .slice(0, 5);
-
-                const tbody = document.getElementById('recentDevolutionsTable');
-                
-                if (recentDevolutions.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="text-center text-muted py-4">
-                                <i class="fas fa-box-open fa-2x mb-2 d-block"></i>
-                                Nenhuma devolução encontrada
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-
-                tbody.innerHTML = recentDevolutions.map(dev => `
-                    <tr>
-                        <td>${dev.codigo_peca}</td>
-                        <td>${dev.descricao_peca}</td>
-                        <td>${dev.cliente}</td>
-                        <td>${formatDate(dev.data_devolucao)}</td>
-                        <td>
-                            <span class="badge bg-primary">${dev.quantidade_devolvida}</span>
-                        </td>
-                    </tr>
-                `).join('');
-
-            } catch (error) {
-                console.error('Error loading recent devolutions:', error);
-            }
-        }
-
         // Sidebar functions
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            
             sidebar.classList.add('show');
             overlay.classList.add('show');
         }
@@ -370,73 +174,22 @@
         function closeSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            
             sidebar.classList.remove('show');
             overlay.classList.remove('show');
         }
 
-        // Close sidebar when clicking on overlay
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeSidebar();
-            }
-        });
-
-        // PWA Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(function(registration) {
-                        console.log('PWA: Service Worker registered successfully:', registration.scope);
-                        
-                        // Check for updates
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('PWA: New version available');
-                                    // Optionally show update notification
-                                }
-                            });
-                        });
-                    })
-                    .catch(function(error) {
-                        console.log('PWA: Service Worker registration failed:', error);
-                    });
-            });
-        }
-
-        // PWA Install prompt
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            console.log('PWA: Install prompt available');
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Show install button if needed
-            const installButton = document.createElement('button');
-            installButton.className = 'btn btn-primary btn-sm position-fixed';
-            installButton.style.cssText = 'bottom: 20px; right: 20px; z-index: 1000;';
-            installButton.innerHTML = '<i class="fas fa-download me-1"></i>Instalar App';
-            installButton.onclick = () => {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('PWA: User accepted the install prompt');
-                    }
-                    deferredPrompt = null;
-                    installButton.remove();
-                });
-            };
-            
-            document.body.appendChild(installButton);
-            
-            // Auto-hide after 30 seconds
-            setTimeout(() => {
-                if (installButton.parentNode) {
-                    installButton.remove();
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                if (window.populateMenu) {
+                    window.populateMenu('dashboard', '');
                 }
-            }, 30000);
+                if (window.initDashboard) {
+                    await initDashboard();
+                }
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+                // Handle error display if necessary
+            }
         });
     </script>
 </body>

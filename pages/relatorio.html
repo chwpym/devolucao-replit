@@ -6,58 +6,30 @@
     <title>Relatórios - Sistema de Controle</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="css/styles.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="fas fa-tools me-2"></i>
-                Sistema de Controle de Retorno de Peças
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">
-                            <i class="fas fa-home me-1"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="cadastroDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-plus-circle me-1"></i>Cadastrar
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="cadastro.html">
-                                <i class="fas fa-undo me-2"></i>Devolução
-                            </a></li>
-                            <li><a class="dropdown-item" href="cadastro-pessoas.html">
-                                <i class="fas fa-user me-2"></i>Cliente/Mecânico
-                            </a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="consulta.html">
-                            <i class="fas fa-search me-1"></i>Consultar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="relatorio.html">
-                            <i class="fas fa-chart-bar me-1"></i>Relatórios
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="backup.html">
-                            <i class="fas fa-download me-1"></i>Backup
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <!-- Populated by menu.js -->
         </div>
     </nav>
+
+    <!-- Sidebar for mobile -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="fas fa-tools me-2"></i>Menu</h4>
+            <button class="sidebar-close" onclick="closeSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-menu">
+            <!-- Populated by menu.js -->
+        </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
     <!-- Main Content -->
     <div class="container mt-4">
@@ -323,38 +295,55 @@
     <!-- Footer -->
     <footer class="bg-light mt-5 py-4">
         <div class="container">
-            <div class="text-center text-muted">
-                <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-center text-muted">
+                    <p class="mb-0">Sistema de Controle de Retorno de Peças &copy; 2024</p>
+                </div>
+                <div id="syncStatus" class="text-muted small"></div>
             </div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/idb@7/build/umd.js"></script>
-    <script src="js/menu.js"></script>
-    <script src="js/database.js"></script>
-    <script src="js/reports.js"></script>
-    <script src="js/utils.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/database.js"></script>
+    <script src="../js/reports.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/sync.js"></script>
     <script>
+        // Sidebar functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.add('show');
+            overlay.classList.add('show');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
         let currentReportData = null;
 
         document.addEventListener('DOMContentLoaded', async function() {
+            if (window.populateMenu) {
+                window.populateMenu('relatorios', '../');
+            }
             try {
-                // Initialize database
                 await initDatabase();
                 
-                // Set default dates (last 30 days)
                 const today = new Date();
                 const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
                 
                 document.getElementById('reportEndDate').value = today.toISOString().split('T')[0];
                 document.getElementById('reportStartDate').value = thirtyDaysAgo.toISOString().split('T')[0];
                 
-                // Generate initial reports
                 await generateReports();
             } catch (error) {
                 console.error('Error initializing reports:', error);
-                showAlert('Erro ao inicializar relatórios: ' + error.message, 'danger');
             }
         });
 
@@ -365,22 +354,18 @@
                 const reportType = document.getElementById('reportType').value;
 
                 if (!startDate || !endDate) {
-                    showAlert('Por favor, selecione as datas de início e fim', 'warning');
                     return;
                 }
 
                 if (new Date(startDate) > new Date(endDate)) {
-                    showAlert('A data de início deve ser anterior à data de fim', 'warning');
                     return;
                 }
 
-                // Get filtered data
                 const db = await getDatabase();
                 const tx = db.transaction('devolucoes', 'readonly');
                 const store = tx.objectStore('devolucoes');
                 const allDevolutions = await store.getAll();
 
-                // Filter by date range
                 const filteredData = allDevolutions.filter(dev => {
                     const compareDate = dev[reportType];
                     return compareDate >= startDate && compareDate <= endDate;
@@ -388,20 +373,17 @@
 
                 currentReportData = filteredData;
 
-                // Generate all reports
                 generateSummaryCards(filteredData);
                 generatePartReport(filteredData);
                 generateCustomerReport(filteredData);
                 generateMechanicReport(filteredData);
                 generateActionReport(filteredData);
 
-                // Show sections
                 document.getElementById('summaryCards').style.display = 'flex';
                 document.getElementById('reportsSection').style.display = 'block';
 
             } catch (error) {
                 console.error('Error generating reports:', error);
-                showAlert('Erro ao gerar relatórios: ' + error.message, 'danger');
             }
         }
 
@@ -442,9 +424,7 @@
                 <tr>
                     <td>${part.codigo}</td>
                     <td>${part.descricao}</td>
-                    <td>
-                        <span class="badge bg-primary">${part.totalQuantity}</span>
-                    </td>
+                    <td><span class="badge bg-primary">${part.totalQuantity}</span></td>
                     <td>${part.occurrences}</td>
                 </tr>
             `).join('');
@@ -474,9 +454,7 @@
             tbody.innerHTML = sortedCustomers.map(customer => `
                 <tr>
                     <td>${customer.name}</td>
-                    <td>
-                        <span class="badge bg-primary">${customer.totalQuantity}</span>
-                    </td>
+                    <td><span class="badge bg-primary">${customer.totalQuantity}</span></td>
                     <td>${customer.occurrences}</td>
                     <td>${customer.parts.size}</td>
                 </tr>
@@ -507,9 +485,7 @@
             tbody.innerHTML = sortedMechanics.map(mechanic => `
                 <tr>
                     <td>${mechanic.name}</td>
-                    <td>
-                        <span class="badge bg-primary">${mechanic.totalQuantity}</span>
-                    </td>
+                    <td><span class="badge bg-primary">${mechanic.totalQuantity}</span></td>
                     <td>${mechanic.occurrences}</td>
                     <td>${mechanic.customers.size}</td>
                 </tr>
@@ -540,23 +516,16 @@
             const tbody = document.getElementById('actionReportTable');
             tbody.innerHTML = sortedActions.map(action => `
                 <tr>
-                    <td>
-                        <span class="badge ${action.action === 'Alterada' ? 'bg-warning' : 'bg-danger'} text-dark">
-                            ${action.action}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="badge bg-primary">${action.totalQuantity}</span>
-                    </td>
+                    <td><span class="badge ${action.action === 'Alterada' ? 'bg-warning' : 'bg-danger'} text-dark">${action.action}</span></td>
+                    <td><span class="badge bg-primary">${action.totalQuantity}</span></td>
                     <td>${action.occurrences}</td>
-                    <td>${formatNumber((action.occurrences / totalOccurrences) * 100, 1)}%</td>
+                    <td>${((action.occurrences / totalOccurrences) * 100).toFixed(1)}%</td>
                 </tr>
             `).join('');
         }
 
         function exportReport(reportType) {
             if (!currentReportData || currentReportData.length === 0) {
-                showAlert('Nenhum dado para exportar', 'warning');
                 return;
             }
 
@@ -661,7 +630,7 @@
                         `"${action.action}"`,
                         action.totalQuantity,
                         action.occurrences,
-                        `${formatNumber((action.occurrences / totalOccurrences) * 100, 1)}%`
+                        `${((action.occurrences / totalOccurrences) * 100).toFixed(1)}%`
                     ]);
                     break;
             }
@@ -680,33 +649,6 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-
-            showAlert('Relatório exportado com sucesso!', 'success');
-        }
-
-        function showAlert(message, type) {
-            const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            `;
-            
-            const alertContainer = document.createElement('div');
-            alertContainer.innerHTML = alertHtml;
-            alertContainer.style.position = 'fixed';
-            alertContainer.style.top = '20px';
-            alertContainer.style.right = '20px';
-            alertContainer.style.zIndex = '9999';
-            alertContainer.style.minWidth = '300px';
-            
-            document.body.appendChild(alertContainer);
-            
-            setTimeout(() => {
-                if (alertContainer.parentNode) {
-                    alertContainer.parentNode.removeChild(alertContainer);
-                }
-            }, 5000);
         }
     </script>
 </body>

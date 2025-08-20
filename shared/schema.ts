@@ -76,3 +76,54 @@ export type Devolution = typeof devolutions.$inferSelect;
 export type InsertDevolution = typeof devolutions.$inferInsert;
 export type DevolutionItem = typeof devolutionItems.$inferSelect;
 export type InsertDevolutionItem = typeof devolutionItems.$inferInsert;
+
+// Warranty table
+export const garantias = pgTable('garantias', {
+    id: serial('id').primaryKey(),
+    uuid: varchar('uuid', { length: 36 }).unique(),
+    productId: varchar('productId', { length: 100 }).notNull(),
+    productDesc: text('productDesc').notNull(),
+    quantity: integer('quantity').notNull(),
+    defect: text('defect').notNull(),
+    purchaseInvoice: varchar('purchaseInvoice', { length: 100 }),
+    value: varchar('value', { length: 50 }),
+    returnInvoice: varchar('returnInvoice', { length: 100 }),
+    salesRequestId: varchar('salesRequestId', { length: 100 }),
+    warrantyRequestId: varchar('warrantyRequestId', { length: 100 }),
+    status: varchar('status', { length: 50 }).default('Pendente'),
+    notes: text('notes'),
+    supplierId: integer('supplierId').references(() => fornecedores.id),
+    clientId: integer('clientId').references(() => people.id),
+    mechanicId: integer('mechanicId').references(() => people.id),
+    purchaseDate: timestamp('purchaseDate'),
+    returnDate: timestamp('returnDate'),
+    warrantyDeadline: timestamp('warrantyDeadline'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Suppliers table
+export const fornecedores = pgTable('fornecedores', {
+    id: serial('id').primaryKey(),
+    uuid: varchar('uuid', { length: 36 }).unique(),
+    name: varchar('name', { length: 255 }).notNull(),
+    contact: varchar('contact', { length: 255 }),
+    phone: varchar('phone', { length: 50 }),
+    email: varchar('email', { length: 255 }),
+    address: text('address'),
+    doc: varchar('doc', { length: 50 }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Company Settings table
+export const empresa = pgTable('empresa', {
+    id: serial('id').primaryKey(),
+    name: varchar('name', { length: 255 }),
+    doc: varchar('doc', { length: 50 }),
+    phone: varchar('phone', { length: 50 }),
+    email: varchar('email', { length: 255 }),
+    address: text('address'),
+    logoUrl: text('logoUrl'),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});

@@ -78,8 +78,20 @@ try {
 }
 }
 
-function updateSyncStatus(message) { const statusElement = document.getElementById('syncStatus'); if (statusElement) { statusElement.textContent = message; } }
+function updateSyncStatus(message) {
+    const statusElement = document.getElementById('syncStatus');
+    if (statusElement) {
+        statusElement.textContent = message;
+    }
+}
 
-window.addEventListener('online', triggerSync); window.addEventListener('offline', () => updateSyncStatus('Offline. Sincronização pendente.'));
+// Add event listeners only in the window context
+if (typeof window !== 'undefined') {
+    window.addEventListener('online', triggerSync);
+    window.addEventListener('offline', () => updateSyncStatus('Offline. Sincronização pendente.'));
+}
 
-if (typeof self !== 'undefined') { self.triggerSync = triggerSync; }
+// Expose triggerSync to the service worker context
+if (typeof self !== 'undefined') {
+    self.triggerSync = triggerSync;
+}

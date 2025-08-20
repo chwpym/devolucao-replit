@@ -1,205 +1,172 @@
-importScripts('/js/sync.js');
+// Service Worker for Parts Return Control System
 
-const CACHE_NAME = 'controle-pecas-v1.0.0';
+// Versioning for cache management
+const CACHE_NAME = 'pecas-cache-v1.2';
+const API_CACHE_NAME = 'pecas-api-cache-v1.2';
+
+// List of essential files to cache
 const urlsToCache = [
   '/',
   '/index.html',
-  '/cadastro.html',
-  '/cadastro-pessoas.html',
-  '/consulta.html',
-  '/relatorio.html',
-  '/backup.html',
-  '/css/styles.css',
-  '/js/database.js',
-  '/js/pessoas.js',
-  '/js/forms.js',
-  '/js/reports.js',
-  '/js/backup.js',
-  '/js/utils.js',
   '/manifest.json',
+  '/css/styles.css',
+  '/js/menu.js',
+  '/js/database.js',
+  '/js/utils.js',
+  '/js/sync.js',
+  '/js/init.js',
+  // Dependencies from CDN
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://cdn.jsdelivr.net/npm/idb@7/build/umd.js'
+  'https://cdn.jsdelivr.net/npm/idb@7/build/umd.js',
+  // Pages (will be added dynamically if needed)
+  '/pages/cadastro.html',
+  '/pages/consulta.html',
+  '/pages/relatorio.html',
+  '/pages/backup.html',
+  '/pages/cadastro-pessoas.html',
+  '/pages/cadastro-fornecedor.html',
+  '/pages/cadastro-garantia.html',
+  '/pages/configuracoes.html',
+  '/pages/consulta-garantia.html',
+  '/pages/relatorio-garantia.html'
 ];
 
-// Install event - cache resources
-self.addEventListener('install', function(event) {
+// --- Service Worker Lifecycle Events ---
+
+// Install: Cache all essential assets
+self.addEventListener('install', event => {
   console.log('Service Worker: Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(function(cache) {
-        console.log('Service Worker: Caching files');
+      .then(cache => {
+        console.log('Service Worker: Caching app shell');
         return cache.addAll(urlsToCache);
       })
-      .then(function() {
-        console.log('Service Worker: Installed successfully');
-        return self.skipWaiting();
-      })
-      .catch(function(error) {
-        console.error('Service Worker: Installation failed', error);
-      })
+      .then(() => self.skipWaiting())
+      .catch(error => console.error('Service Worker installation failed:', error))
   );
 });
 
-// Activate event - clean up old caches
-self.addEventListener('activate', function(event) {
+// Activate: Clean up old caches
+self.addEventListener('activate', event => {
   console.log('Service Worker: Activating...');
   event.waitUntil(
-    caches.keys().then(function(cacheNames) {
+    caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.map(function(cacheName) {
-          if (cacheName !== CACHE_NAME) {
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME && cacheName !== API_CACHE_NAME) {
             console.log('Service Worker: Deleting old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
-    }).then(function() {
-      console.log('Service Worker: Activated successfully');
+    }).then(() => {
+      console.log('Service Worker: Activated and ready to handle fetches.');
       return self.clients.claim();
     })
   );
 });
 
-// Fetch event - serve cached content when offline
-self.addEventListener('fetch', function(event) {
-  // Skip non-HTTP requests
-  if (!event.request.url.startsWith('http')) {
-    return;
-  }
 
-  // Skip requests to external APIs that need to be fresh
-  if (event.request.url.includes('neon.tech') || 
-      event.request.url.includes('api.') ||
-      event.request.method !== 'GET') {
-    return;
-  }
+// --- Fetch Event: Caching Strategies ---
 
-  event.respondWith(
-    caches.match(event.request)
-      .then(function(response) {
-        // Return cached version or fetch from network
-        if (response) {
-          console.log('Service Worker: Serving from cache:', event.request.url);
-          return response;
-        }
+self.addEventListener('fetch', event => {
+  const { request } = event;
+  const url = new URL(request.url);
 
-        console.log('Service Worker: Fetching from network:', event.request.url);
-        return fetch(event.request).then(function(response) {
-          // Don't cache opaque responses or errors
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-
-          // Clone the response for caching
+  // Strategy 1: For API calls, use a Network First, then Cache strategy
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          // If successful, cache a clone of the response
           const responseToCache = response.clone();
-
-          caches.open(CACHE_NAME)
-            .then(function(cache) {
-              cache.put(event.request, responseToCache);
-            })
-            .catch(function(error) {
-              console.warn('Service Worker: Cache put failed', error);
-            });
-
+          caches.open(API_CACHE_NAME)
+            .then(cache => cache.put(request, responseToCache));
           return response;
+        })
+        .catch(() => {
+          // If network fails, try to serve from cache
+          return caches.match(request);
+        })
+    );
+    return;
+  }
+
+  // Strategy 2: For other requests, use a Cache First, then Network strategy
+  event.respondWith(
+    caches.match(request)
+      .then(cachedResponse => {
+        // If we have a cached response, return it
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        // Otherwise, fetch from the network
+        return fetch(request).then(networkResponse => {
+          // If the fetch is successful, cache the response
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME)
+              .then(cache => cache.put(request, responseToCache));
+          }
+          return networkResponse;
         });
       })
-      .catch(function(error) {
-        console.error('Service Worker: Fetch failed', error);
-        
-        // Return offline page for navigation requests
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
-        
-        throw error;
-      })
   );
 });
 
-// Background sync for offline data synchronization
-self.addEventListener('sync', function(event) {
-  console.log('Service Worker: Background sync triggered:', event.tag);
-  
-  if (event.tag === 'background-sync') {
-    event.waitUntil(doBackgroundSync());
-  }
-});
 
-// Push notification handler
-self.addEventListener('push', function(event) {
-  console.log('Service Worker: Push notification received');
-  
-  const options = {
-    body: event.data ? event.data.text() : 'Nova atualização disponível',
-    icon: '/manifest-icon-192.png',
-    badge: '/manifest-icon-96.png',
-    vibrate: [100, 50, 100],
-    data: {
-      dateOfArrival: Date.now(),
-      primaryKey: 1
-    },
-    actions: [
-      {
-        action: 'explore',
-        title: 'Abrir Sistema',
-        icon: '/manifest-icon-96.png'
-      },
-      {
-        action: 'close',
-        title: 'Fechar',
-        icon: '/manifest-icon-96.png'
-      }
-    ]
-  };
+// --- Background Sync and Notifications ---
 
-  event.waitUntil(
-    self.registration.showNotification('Sistema de Controle de Peças', options)
-  );
-});
-
-// Notification click handler
-self.addEventListener('notificationclick', function(event) {
-  console.log('Service Worker: Notification clicked');
-  
-  event.notification.close();
-
-  if (event.action === 'explore') {
+// Listen for background sync events
+self.addEventListener('sync', event => {
+  console.log('Service Worker: Background sync event received:', event.tag);
+  if (event.tag === 'data-sync') {
     event.waitUntil(
-      clients.openWindow('/')
+      self.triggerSync()
+        .then(() => console.log('Background sync finished.'))
+        .catch(err => console.error('Background sync failed:', err))
     );
   }
 });
 
-// Background sync function
-async function doBackgroundSync() {
-  try {
-    console.log('Service Worker: Performing background sync');
+// Push notification received
+self.addEventListener('push', event => {
+  console.log('Service Worker: Push message received.');
+  const data = event.data.json();
+  const options = {
+    body: data.body,
+    icon: '/manifest-icon-192.png',
+    badge: '/manifest-icon-96.png',
+    vibrate: [100, 50, 100],
+    data: {
+      url: data.url || '/'
+    }
+  };
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  );
+});
 
-    // Here you could implement data synchronization logic
-    // For example, sync pending devolutions or people data
+// Notification clicked
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil(
+    clients.openWindow(event.notification.data.url)
+  );
+});
 
-    // For now, just log the sync attempt
-    console.log('Service Worker: Background sync completed');
 
-    return Promise.resolve();
-  } catch (error) {
-    console.error('Service Worker: Background sync failed', error);
-    throw error;
-  }
-}
+// --- Communication with Client ---
 
-// Message handler for communication with main thread
-self.addEventListener('message', function(event) {
-  console.log('Service Worker: Message received:', event.data);
-  
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+// Listen for messages from the client
+self.addEventListener('message', event => {
+  if (event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  
-  if (event.data && event.data.type === 'GET_VERSION') {
+  if (event.data.type === 'GET_VERSION') {
     event.ports[0].postMessage({ version: CACHE_NAME });
   }
 });

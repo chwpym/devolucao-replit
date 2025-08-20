@@ -331,12 +331,12 @@ function validateDateFields() {
     dataDevolucao.setCustomValidity('');
 
     if (saleDate && returnDate) {
-        if (parseLocalDate(returnDate) < parseLocalDate(saleDate)) {
+        if (new Date(returnDate) < new Date(saleDate)) {
             dataDevolucao.setCustomValidity('Data da devolução não pode ser anterior à data da venda.');
         }
     }
 
-    if (returnDate && parseLocalDate(returnDate) > new Date()) {
+    if (returnDate && new Date(returnDate) > new Date()) {
         dataDevolucao.setCustomValidity('Data da devolução não pode ser no futuro.');
     }
 
@@ -386,7 +386,7 @@ function clearValidationMessages() {
  * @returns {boolean} True if valid date
  */
 function isValidDate(dateString) {
-    const date = parseLocalDate(dateString);
+    const date = new Date(dateString);
     return date instanceof Date && !isNaN(date.getTime());
 }
 
