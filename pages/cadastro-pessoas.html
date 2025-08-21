@@ -94,6 +94,10 @@
                                 <input type="email" class="form-control" id="email">
                             </div>
                             <div class="mb-3">
+                                <label for="endereco" class="form-label">Endereço</label>
+                                <textarea class="form-control" id="endereco" rows="2"></textarea>
+                            </div>
+                            <div class="mb-3">
                                 <label for="observacoes" class="form-label">Observações</label>
                                 <textarea class="form-control" id="observacoes" rows="3"></textarea>
                             </div>
@@ -180,8 +184,8 @@
                 window.populateMenu('cadastros', '../');
             }
             try {
-                if (window.initPeoplePage) {
-                    await initPeoplePage();
+                if (window.initPersonFormValidation) {
+                    await initPersonFormValidation();
                 }
             } catch (error) {
                 console.error('Error initializing people page:', error);

@@ -561,22 +561,6 @@ function addNewPart() {
                 </div>
             </div>
             <div class="col-md-3 mb-3">
-                <label class="form-label">
-                    Ação <span class="text-danger">*</span>
-                </label>
-                <select class="form-select tipo-acao" name="parts[${partCounter - 1}][tipo_acao]" required>
-                    <option value="">Selecione...</option>
-                    <option value="Troca">Troca</option>
-                    <option value="Reembolso">Reembolso</option>
-                    <option value="Reparo">Reparo</option>
-                    <option value="Descarte">Descarte</option>
-                    <option value="Análise">Análise</option>
-                </select>
-                <div class="invalid-feedback">
-                    Por favor, selecione o tipo de ação.
-                </div>
-            </div>
-            <div class="col-md-3 mb-3">
                 <label class="form-label">Descrição da Peça <span class="text-danger">*</span></label>
                 <input type="text" class="form-control descricao-peca" name="parts[${partCounter - 1}][descricao_peca]" required>
                 <div class="invalid-feedback">
@@ -684,15 +668,13 @@ function getPartsData() {
         const codigoPeca = row.querySelector('.codigo-peca').value.trim();
         const descricaoPeca = row.querySelector('.descricao-peca').value.trim();
         const quantidadeDevolvida = parseInt(row.querySelector('.quantidade-devolvida').value);
-        const tipoAcao = row.querySelector('.tipo-acao').value;
         const observacoesItem = row.querySelector('.observacoes-item').value.trim();
         
-        if (codigoPeca && descricaoPeca && quantidadeDevolvida && tipoAcao) {
+        if (codigoPeca && descricaoPeca && quantidadeDevolvida) {
             parts.push({
                 codigo_peca: codigoPeca,
                 descricao_peca: descricaoPeca,
                 quantidade_devolvida: quantidadeDevolvida,
-                tipo_acao: tipoAcao,
                 observacoes_item: observacoesItem || null
             });
         }
@@ -712,10 +694,9 @@ function validateParts() {
         const codigoPeca = row.querySelector('.codigo-peca');
         const descricaoPeca = row.querySelector('.descricao-peca');
         const quantidadeDevolvida = row.querySelector('.quantidade-devolvida');
-        const tipoAcao = row.querySelector('.tipo-acao');
         
         // Clear previous validation
-        [codigoPeca, descricaoPeca, quantidadeDevolvida, tipoAcao].forEach(field => {
+        [codigoPeca, descricaoPeca, quantidadeDevolvida].forEach(field => {
             field.classList.remove('is-invalid');
         });
         
@@ -732,11 +713,6 @@ function validateParts() {
         
         if (!quantidadeDevolvida.value || parseInt(quantidadeDevolvida.value) < 1) {
             quantidadeDevolvida.classList.add('is-invalid');
-            isValid = false;
-        }
-        
-        if (!tipoAcao.value) {
-            tipoAcao.classList.add('is-invalid');
             isValid = false;
         }
     });

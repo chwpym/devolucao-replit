@@ -36,7 +36,6 @@ export const devolutionItems = pgTable('devolution_items', {
   codigo_peca: varchar('codigo_peca', { length: 100 }).notNull(),
   descricao_peca: text('descricao_peca').notNull(),
   quantidade_devolvida: integer('quantidade_devolvida').notNull(),
-  tipo_acao: varchar('tipo_acao', { length: 50 }).notNull(),
   observacoes_item: text('observacoes_item'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),

@@ -62,8 +62,6 @@ async function addPerson(personData) {
 
         // Prepare data for storage
         const dataToStore = {
-            uuid: personData.uuid || generateUUID(),
-            codigo: personData.codigo || await generatePersonCode(),
             nome: personData.nome.toString().trim(),
             tipo: personData.tipo,
             telefone: personData.telefone ? personData.telefone.toString().trim() : '',
@@ -316,11 +314,7 @@ async function submitPersonForm() {
             // Update existing person
             await updatePerson(window.editingPersonId, formData);
             personId = window.editingPersonId;
-            if (typeof showAlert === 'function') {
-                showAlert('Pessoa atualizada com sucesso!', 'success');
-            } else {
-                alert('Pessoa atualizada com sucesso!');
-            }
+            showAlert('Pessoa atualizada com sucesso!', 'success');
             console.log('Person updated successfully with ID:', personId);
             
             // Reset editing mode
@@ -328,11 +322,7 @@ async function submitPersonForm() {
         } else {
             // Create new person
             personId = await addPerson(formData);
-            if (typeof showAlert === 'function') {
-                showAlert('Pessoa cadastrada com sucesso!', 'success');
-            } else {
-                alert('Pessoa cadastrada com sucesso!');
-            }
+            showAlert('Pessoa cadastrada com sucesso!', 'success');
             console.log('Person added successfully with ID:', personId);
         }
 
@@ -348,16 +338,22 @@ async function submitPersonForm() {
 
     } catch (error) {
         console.error('Error saving person:', error);
-        if (typeof showAlert === 'function') {
-            showAlert('Erro ao salvar pessoa: ' + error.message, 'danger');
-        } else {
-            alert('Erro ao salvar pessoa: ' + error.message);
-        }
+        showAlert('Erro ao salvar pessoa: ' + error.message, 'danger');
     } finally {
         // Restore button state
         submitButton.disabled = false;
         submitButton.innerHTML = originalText;
     }
+}
+
+function resetPersonForm() {
+    const form = document.getElementById('personForm');
+    if (form) {
+        form.reset();
+        form.classList.remove('was-validated');
+    }
+    // Also reset the editing ID
+    window.editingPersonId = null;
 }
 
 /**
@@ -529,23 +525,11 @@ window.loadRecentPeople = loadRecentPeople;
 async function updatePerson(id, personData) {
     try {
         const db = await getDatabase();
-        const tx = db.transaction(PEOPLE_STORE_NAME, 'readwrite');
-        const store = tx.objectStore(PEOPLE_STORE_NAME);
 
-        const existingRecord = await store.get(id);
-        if (!existingRecord) {
-            throw new Error('Registro de pessoa não encontrado para atualização.');
-        }
+        // Add updated timestamp
+        personData.updated_at = new Date().toISOString();
 
-        const updatedRecord = {
-            ...existingRecord,
-            ...personData,
-            id: id, // Ensure ID is preserved
-            updated_at: new Date().toISOString(),
-        };
-
-        await store.put(updatedRecord);
-        await tx.done;
+        await db.put(PEOPLE_STORE_NAME, { ...personData, id });
         console.log('Person updated successfully with ID:', id);
         return true;
     } catch (error) {

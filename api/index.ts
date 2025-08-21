@@ -14,11 +14,65 @@ app.get('/api', (req: Request, res: Response) => {
 // --- Devoluções Routes ---
 app.get('/api/devolucoes', async (req: Request, res: Response) => {
     try {
-        const devolucoes = await db.select().from(schema.devolutions);
-        res.status(200).json(devolucoes);
+        const devolutionsWithItems = await db.query.devolutions.findMany({
+            with: {
+                items: true,
+                client: true,
+                mechanic: true
+            }
+        });
+        res.status(200).json(devolutionsWithItems);
     } catch (error) {
-    console.error('API Error in /api/devolucoes:', error);
-    res.status(500).json({ error: 'Failed to get devolucoes.', details: error.message });
+        console.error('API Error in /api/devolucoes (GET):', error);
+        res.status(500).json({ error: 'Failed to get devolucoes.', details: error.message });
+    }
+});
+
+app.post('/api/devolucoes', async (req: Request, res: Response) => {
+    const { parts, ...headerData } = req.body;
+
+    if (!parts || !Array.isArray(parts) || parts.length === 0) {
+        return res.status(400).json({ error: 'A devolução deve conter pelo menos uma peça.' });
+    }
+
+    try {
+        const newDevolution = await db.transaction(async (tx) => {
+            // Insert header
+            const newHeader = await tx.insert(schema.devolutions).values({
+                ...headerData,
+                updatedAt: new Date(),
+            }).returning();
+
+            const devolutionId = newHeader[0].id;
+
+            // Insert items
+            const itemInsertPromises = parts.map(part => {
+                return tx.insert(schema.devolutionItems).values({
+                    devolution_id: devolutionId,
+                    ...part,
+                    updatedAt: new Date(),
+                });
+            });
+
+            await Promise.all(itemInsertPromises);
+
+            // Fetch the full devolution to return
+            const result = await tx.query.devolutions.findFirst({
+                where: eq(schema.devolutions.id, devolutionId),
+                with: {
+                    items: true,
+                    client: true,
+                    mechanic: true,
+                },
+            });
+
+            return result;
+        });
+
+        res.status(201).json(newDevolution);
+    } catch (error) {
+        console.error('API Error in /api/devolucoes (POST):', error);
+        res.status(500).json({ error: 'Failed to save devolution.', details: error.message });
     }
 });
 
