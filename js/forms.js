@@ -404,49 +404,6 @@ function getTodayDate() {
  * @param {string} message - Message to display
  * @param {string} type - Alert type (success, danger, warning, info)
  */
-function showAlert(message, type = 'info') {
-    const alertContainer = document.getElementById('alertContainer');
-    if (!alertContainer) return;
-
-    const alertHtml = `
-        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-            <i class="fas fa-${getAlertIcon(type)} me-2"></i>
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    `;
-
-    alertContainer.innerHTML = alertHtml;
-
-    // Auto-dismiss after 5 seconds for success messages
-    if (type === 'success') {
-        setTimeout(() => {
-            const alert = alertContainer.querySelector('.alert');
-            if (alert) {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            }
-        }, 5000);
-    }
-
-    // Scroll to alert
-    alertContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-/**
- * Get appropriate icon for alert type
- * @param {string} type - Alert type
- * @returns {string} Icon class name
- */
-function getAlertIcon(type) {
-    const icons = {
-        success: 'check-circle',
-        danger: 'exclamation-triangle',
-        warning: 'exclamation-triangle',
-        info: 'info-circle'
-    };
-    return icons[type] || 'info-circle';
-}
 
 /**
  * Pre-fill form with data (for editing functionality)

@@ -581,7 +581,48 @@ const storage = {
     }
 };
 
+function showAlert(message, type = 'info') {
+    const alertContainer = document.getElementById('alertContainer');
+    if (!alertContainer) return;
+
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            <i class="fas fa-${getAlertIcon(type)} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+
+    alertContainer.innerHTML = alertHtml;
+
+    // Auto-dismiss after 5 seconds for success messages
+    if (type === 'success') {
+        setTimeout(() => {
+            const alert = alertContainer.querySelector('.alert');
+            if (alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }
+        }, 5000);
+    }
+
+    // Scroll to alert
+    alertContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function getAlertIcon(type) {
+    const icons = {
+        success: 'check-circle',
+        danger: 'exclamation-triangle',
+        warning: 'exclamation-triangle',
+        info: 'info-circle'
+    };
+    return icons[type] || 'info-circle';
+}
+
+
 // Export functions for global use
+window.showAlert = showAlert;
 window.formatDate = formatDate;
 window.formatCurrency = formatCurrency;
 window.formatNumber = formatNumber;
